@@ -19,18 +19,18 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 	end
 
 	reg [2:0] state = IDLE;
-	reg [3:0] bit = 0;
+	reg [3:0] n = 0;
 
 	always @(posedge clk) begin
 		case (state)
 			IDLE: begin
 				if (start) begin
 					state <= PREAMBLE;
-					bit <= 0;
+					n <= 0;
 				end
 			end
 			PREAMBLE: begin
-				bit <= bit + 1
+				n <= n + 1
 			end
 		endcase
 	end
