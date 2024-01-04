@@ -71,8 +71,8 @@ module top(
 	assign tx_p = tx_eth;
 	assign tx_n = ~tx_p;
 	
-	assign IOB_8A  = tx_n;
-	assign IOB_9B  = tx_p;
+	assign IOB_8A  = tx_p;
+	assign IOB_9B  = tx_n;
 	assign IOB_23B = tx_p;
 
 endmodule
