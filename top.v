@@ -1,5 +1,6 @@
 
 `include "ethernet.v"
+`include "sender.v"
 
 
 
@@ -33,12 +34,6 @@ module top(
       .PLLOUTCORE(clk)
    );
 
-   reg [21:0] tick = 0;
-   wire start = (tick == 1000);
-   always @(posedge clk) begin
-      if (clk_eth)
-         tick <= tick + 1;
-   end
 
    wire tx_link;
 
@@ -49,7 +44,7 @@ module top(
    end
    
    wire tx_eth;
-   eth_tx2 et(clk, clk_eth, start, tx_eth, RGB2);
+   sender sender (clk, clk_eth, tx_eth, RGB2);
 
    wire tx_p;
    wire tx_n;

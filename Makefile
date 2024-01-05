@@ -9,6 +9,7 @@ VCD := $(NAME).vcd
 
 SRCS += top.v
 SRCS += ethernet.v
+SRCS += sender.v
 
 
 all: $(BIN)
@@ -22,10 +23,10 @@ $(JSON): $(SRCS)
 	yosys -p "synth_ice40 -top top -json $(NAME).json" top.v
 
 $(ASC): $(JSON)
-	nextpnr-ice40 --quiet --freq 48 --package sg48 --up5k --json $(JSON) --pcf $(PCF) --asc $(ASC)
+	nextpnr-ice40 --freq 48 --package sg48 --up5k --json $(JSON) --pcf $(PCF) --asc $(ASC)
 
 gui: $(ASC) $(PCF)
-	nextpnr-ice40 --quiet --freq 48 --package sg48 --up5k --json $(JSON) --pcf $(PCF) --gui
+	nextpnr-ice40 --freq 48 --package sg48 --up5k --json $(JSON) --pcf $(PCF) --gui
 
 $(VP): $(SRCS) test.v
 	iverilog -Wall -Winfloop -o $(VP) test.v 

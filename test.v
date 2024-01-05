@@ -1,5 +1,6 @@
 
 `include "ethernet.v"
+`include "sender.v"
 `include "ethernet-stolen.v"
 
 
@@ -32,7 +33,7 @@ module test();
    wire tx_eth2;
    wire tx_led;
    eth_tx et1(clk_eth, start1, tx_eth);
-   eth_tx2 et2(clk, clk_eth, start2, tx_eth2, tx_led);
+   sender sender (clk, clk_eth, tx_eth2, tx_led);
 
 
    always @(posedge clk) begin

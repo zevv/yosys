@@ -1,17 +1,20 @@
 
 /* verilator lint_off DECLFILENAME */
 
-module eth_tx2(input clk, input clk_en, input start, output reg tx = 0, output tx_led);
+module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, input w_en, input start, output reg tx = 0, output tx_led);
    
-   reg [10:0] len = 'd60;
-   reg [7:0] frame [0:'d60];
+   reg [10:0] len = 'd200;
+   reg [7:0] frame [0:'hff];
+   integer k;
    initial begin
-      $readmemh("frame2.bin", frame);
+      //$readmemh("zeros.bin", frame);
+      for (k=0; k<200; k=k+1) frame[k] = 0;
    end
 
    localparam LINK = 0, PREAMBLE = 1, SFD = 2, DATA = 3, CRC = 4, IDLE = 5, IPG = 6;
    localparam CRC_INIT = 32'hFFFFFFFF, CRC_POLY = 32'h04C11DB7;
 
+   reg [19:0] link_timer = 0;
    reg [2:0] state = LINK;
    reg [18:0] n = 0;
    reg [10:0] ptr = 0;
@@ -25,7 +28,16 @@ module eth_tx2(input clk, input clk_en, input start, output reg tx = 0, output t
 
    always @(posedge clk) begin
 
+      if (w_en) begin
+         frame[w_addr] <= w_data;
+      end
+
       if(clk_en) begin
+
+         link_timer <= link_timer + 1;
+         if (link_timer == 320000) begin
+            link_timer <= 0;
+         end
 
          n <= n + 1;
          case (state)
@@ -41,7 +53,7 @@ module eth_tx2(input clk, input clk_en, input start, output reg tx = 0, output t
          endcase
 
          case (state)
-            LINK: tx <= (n == 0);
+            LINK: tx <= (link_timer == 0);
             PREAMBLE: tx <= data_out[0] ^ !n[0];
             SFD: tx <= data_out[0] ^ !n[0];
             DATA: tx <= data_out[0] ^ !n[0];
