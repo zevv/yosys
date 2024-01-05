@@ -108,7 +108,8 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 		TX_SFD = 2,
 		TX_DATA = 3,
 		TX_CRC = 4,
-		IDLE = 5;
+		IDLE = 5,
+		IPG = 6;
 
 	reg [7:0] frame [0:'d60];
 	initial begin
@@ -117,27 +118,35 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 
 	reg [10:0] len = 'd60;
 	reg [2:0] state = LINK;
-	reg [18:0] n = 15;
+	reg [18:0] n = 0;
 	reg [10:0] ptr = 0;
 	reg [7:0] next_byte = 0;
 	reg [7:0] shift = 0;
 	reg [31:0] crc = 0;
 		
-	wire hop = (n == 0);
-
-	wire tx_byte = (state == TX_PREAMBLE) || (state == TX_SFD) || (state == TX_DATA);
-	wire tx_crc = (state == TX_CRC);
-		
 	always @(posedge clk) begin
 		
 		n <= n + 1;
 
-		if (state == LINK) begin
-			tx <= (n == 5);
-		end
+		case (state)
+			LINK:
+				tx <= (n == 0);
+			TX_PREAMBLE:
+				tx <= shift[0] ^ ~n[0];
+			TX_SFD:
+				tx <= shift[0] ^ ~n[0];
+			TX_DATA:
+				tx <= shift[0] ^ ~n[0];
+			TX_CRC:
+				tx <= crc[31] ^ n[0];
+			IDLE:
+				tx <= 1;
+			IPG:
+				tx <= 0;
+		endcase
 
-		if (tx_byte) begin
-			tx <= shift[0] ^ ~n[0];
+
+		if (state == TX_PREAMBLE || state == TX_SFD || state == TX_DATA) begin
 			if (n[0])
 				shift <= { 1'b0, shift[7:1] };
 			else
@@ -149,15 +158,12 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 			end
 		end
 
-		if (tx_crc) begin
-			tx <= crc[31] ^ n[0];
+		if (state == TX_CRC) begin
 			if (n[0])
 				crc <= crc << 1;
 		end
 
-
 		case (state)
-
 			LINK: begin
 				if (start) begin
 					state <= TX_PREAMBLE;
@@ -167,7 +173,6 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 					ptr <= 0;
 				end
 			end
-
 			TX_PREAMBLE: begin
 				if (ptr == 6) begin
 					if (n == 14) begin
@@ -178,7 +183,6 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 					end
 				end
 			end
-
 			TX_SFD: begin
 				if(n == 14) begin
 					next_byte <= frame[0];
@@ -189,7 +193,6 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 					crc <= 32'hFFFFFFFF;
 				end
 			end
-
 			TX_DATA: begin
 				if (n == 14) begin
 					next_byte <= frame[ptr];
@@ -200,30 +203,25 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 					end
 				end
 			end
-
 			TX_CRC: begin
 				if (n == 63) begin
 					state <= IDLE;
-					tx <= 0;
 					n <= 0;
 				end
 			end
-
 			IDLE: begin
-				tx <= 1;
-				if (n == 6) begin
-					tx <= 0;
+				if (n == 5) begin
+					state <= IPG;
+				end
+			end
+			IPG: begin
+				if (n == 192) begin
 					state <= LINK;
 				end
 			end
-
-
 		endcase
 
 	end
-
-
-
 
 endmodule
 
