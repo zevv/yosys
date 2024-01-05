@@ -99,4 +99,133 @@ module eth_tx(input clk, input start, output reg tx = 0);
 endmodule
 
 
+
+module eth_tx2(input clk, input start, output reg tx = 0);
+
+	localparam
+		LINK = 0,
+		TX_PREAMBLE = 1,
+		TX_SFD = 2,
+		TX_DATA = 3,
+		TX_CRC = 4,
+		IDLE = 5;
+
+	reg [7:0] frame [0:'d60];
+	initial begin
+		$readmemh("frame2.bin", frame);
+	end
+
+	reg [10:0] len = 'd60;
+	reg [2:0] state = LINK;
+	reg [18:0] n = 15;
+	reg [10:0] ptr = 0;
+	reg [7:0] next_byte = 0;
+	reg [7:0] shift = 0;
+	reg [31:0] crc = 0;
+		
+	wire hop = (n == 0);
+
+	wire tx_byte = (state == TX_PREAMBLE) || (state == TX_SFD) || (state == TX_DATA);
+	wire tx_crc = (state == TX_CRC);
+		
+	always @(posedge clk) begin
+		
+		n <= n + 1;
+
+		if (state == LINK) begin
+			tx <= (n == 5);
+		end
+
+		if (tx_byte) begin
+			tx <= shift[0] ^ ~n[0];
+			if (n[0])
+				shift <= { 1'b0, shift[7:1] };
+			else
+				crc <= ({crc[30:0],1'b0} ^ ({32{shift[0] ^ crc[31]}} & 32'h04C11DB7));
+			if (n == 15) begin
+				shift <= next_byte;
+				ptr <= ptr + 1;
+				n <= 0;
+			end
+		end
+
+		if (tx_crc) begin
+			tx <= crc[31] ^ n[0];
+			if (n[0])
+				crc <= crc << 1;
+		end
+
+
+		case (state)
+
+			LINK: begin
+				if (start) begin
+					state <= TX_PREAMBLE;
+					next_byte <= 8'h55;
+					shift <= 8'h55;
+					n <= 0;
+					ptr <= 0;
+				end
+			end
+
+			TX_PREAMBLE: begin
+				if (ptr == 6) begin
+					if (n == 14) begin
+						next_byte <= 8'hD5;
+					end
+					if (n == 15) begin
+						state <= TX_SFD;
+					end
+				end
+			end
+
+			TX_SFD: begin
+				if(n == 14) begin
+					next_byte <= frame[0];
+				end
+				if(n == 15) begin
+					ptr <= 1;
+					state <= TX_DATA;
+					crc <= 32'hFFFFFFFF;
+				end
+			end
+
+			TX_DATA: begin
+				if (n == 14) begin
+					next_byte <= frame[ptr];
+				end
+				if (n == 15) begin
+					if(ptr == len) begin
+						state <= TX_CRC;
+					end
+				end
+			end
+
+			TX_CRC: begin
+				if (n == 63) begin
+					state <= IDLE;
+					tx <= 0;
+					n <= 0;
+				end
+			end
+
+			IDLE: begin
+				tx <= 1;
+				if (n == 6) begin
+					tx <= 0;
+					state <= LINK;
+				end
+			end
+
+
+		endcase
+
+	end
+
+
+
+
+endmodule
+
+
 // vi: ft=verilog ts=3 sw=3

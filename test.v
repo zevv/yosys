@@ -6,41 +6,6 @@
 
 
 
-module eth_tx2(input clk, input start, output reg tx = 0);
-
-	localparam
-		IDLE = 0,
-		PREAMBLE = 1,
-		TX_DATA = 2;
-
-	reg [7:0] frame [0:'h43];
-	initial begin
-		$readmemh("frame2.bin", frame);
-	end
-
-	reg [2:0] state = IDLE;
-	reg [3:0] n = 0;
-
-	always @(posedge clk) begin
-		case (state)
-			IDLE: begin
-				if (start) begin
-					state <= PREAMBLE;
-					n <= 0;
-				end
-			end
-			PREAMBLE: begin
-				n <= n + 1
-			end
-		endcase
-	end
-
-
-
-
-endmodule
-
-
 module test();
 	
    reg clk = 0;
@@ -57,7 +22,7 @@ module test();
 	reg start2 = 0;
 	always @(posedge clk_eth) begin
 		cnt <= cnt + 1;
-		start1 <= (cnt == 31);
+		start1 <= (cnt == 30);
 		start2 <= (cnt == 32);
 	end
 

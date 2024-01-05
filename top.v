@@ -2,25 +2,6 @@
 `include "ethernet.v"
 
 
-module gen_link(input clk, output reg link);
-	
-	reg [20:0] link_cnt;
-	
-	always @(posedge clk) begin
-		if(link_cnt == 21'd0) begin
-			link <= 1;
-		end
-		if(link_cnt == 21'd4) begin
-			link <= 0;
-		end
-		if(link_cnt == 21'd640000) begin
-			link_cnt <= 21'd0;
-		end
-		link_cnt <= link_cnt + 21'd1;
-	end
-
-endmodule
-
 
 module top(
 	output IOB_8A, output IOB_23B,
@@ -51,10 +32,13 @@ module top(
 		.PLLOUTCORE(clk)
 	);
 
+	reg [21:0] tick = 0;
+	wire start = (tick == 1000);
+	always @(posedge clk) begin
+		tick <= tick + 1;
+	end
 
 	wire tx_link;
-
-	gen_link i(clk, tx_link);
 
 	reg clk_eth = 0;
 
@@ -63,7 +47,7 @@ module top(
 	end
 	
 	wire tx_eth;
-	eth_tx et(clk_eth, tx_eth);
+	eth_tx2 et(clk_eth, start, tx_eth);
 
 	wire tx_p;
 	wire tx_n;
