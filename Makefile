@@ -19,7 +19,7 @@ $(BIN): $(ASC)
 	icepack $(NAME).asc $@
 
 $(JSON): $(SRCS)
-	yosys -q -p "synth_ice40 -top top -json $(NAME).json" top.v
+	yosys -p "synth_ice40 -top top -json $(NAME).json" top.v
 
 $(ASC): $(JSON)
 	nextpnr-ice40 --quiet --freq 48 --package sg48 --up5k --json $(JSON) --pcf $(PCF) --asc $(ASC)

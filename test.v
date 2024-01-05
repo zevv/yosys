@@ -1,9 +1,6 @@
 
 `include "ethernet.v"
-
-
-
-
+`include "ethernet-stolen.v"
 
 
 module test();
@@ -17,7 +14,7 @@ module test();
 		#100000 $finish;
 	end
 
-	reg [20:0] cnt = 0;
+	reg [11:0] cnt = 0;
 	reg start1 = 0;
 	reg start2 = 0;
 	always @(posedge clk_eth) begin
@@ -28,18 +25,19 @@ module test();
 
 	reg clk_eth = 0;
 
-	always @(posedge clk) begin
-		clk_eth = ~clk_eth;
-	end
 
 	wire error = tx_eth != tx_eth2;
 	
 	wire tx_eth;
 	wire tx_eth2;
 	eth_tx et1(clk_eth, start1, tx_eth);
-	eth_tx2 et2(clk_eth, start2, tx_eth2);
+	eth_tx2 et2(clk, clk_eth, start2, tx_eth2);
 
 
+	always @(posedge clk) begin
+		clk_eth <= ~clk_eth;
+	end
+	
 
 endmodule
 

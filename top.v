@@ -35,7 +35,8 @@ module top(
 	reg [21:0] tick = 0;
 	wire start = (tick == 1000);
 	always @(posedge clk) begin
-		tick <= tick + 1;
+		if (clk_eth)
+			tick <= tick + 1;
 	end
 
 	wire tx_link;
@@ -43,11 +44,11 @@ module top(
 	reg clk_eth = 0;
 
 	always @(posedge clk) begin
-		clk_eth = ~clk_eth;
+		clk_eth <= ~clk_eth;
 	end
 	
 	wire tx_eth;
-	eth_tx2 et(clk_eth, start, tx_eth);
+	eth_tx2 et(clk, clk_eth, start, tx_eth);
 
 	wire tx_p;
 	wire tx_n;
