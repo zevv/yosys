@@ -127,98 +127,64 @@ module eth_tx2(input clk, input start, output reg tx = 0);
 	always @(posedge clk) begin
 		
 		n <= n + 1;
+		
+		case (state)
+			LINK: if (start) ptr <= 0;
+			TX_SFD: if(n == 15) ptr <= 1;
+			TX_PREAMBLE, TX_SFD, TX_DATA: if (n == 15) ptr <= ptr + 1;
+		endcase
+
+		case (state)
+			LINK: tx <= (n == 0);
+			TX_PREAMBLE: tx <= shift[0] ^ ~n[0];
+			TX_SFD: tx <= shift[0] ^ ~n[0];
+			TX_DATA: tx <= shift[0] ^ ~n[0];
+			TX_CRC: tx <= crc[31] ^ n[0];
+			IDLE: tx <= 1;
+			IPG: tx <= 0;
+		endcase
 
 		case (state)
 			LINK:
-				tx <= (n == 0);
-			TX_PREAMBLE:
-				tx <= shift[0] ^ ~n[0];
-			TX_SFD:
-				tx <= shift[0] ^ ~n[0];
-			TX_DATA:
-				tx <= shift[0] ^ ~n[0];
+				if (start) n <= 0;
+			TX_PREAMBLE, TX_SFD, TX_DATA:
+				if (n == 15) n <= 0;
 			TX_CRC:
-				tx <= crc[31] ^ n[0];
-			IDLE:
-				tx <= 1;
-			IPG:
-				tx <= 0;
+				if (n == 63) n <= 0;
 		endcase
 
-
-		if (state == TX_PREAMBLE || state == TX_SFD || state == TX_DATA) begin
-			if (n[0])
-				shift <= { 1'b0, shift[7:1] };
-			else
-				crc <= ({crc[30:0],1'b0} ^ ({32{shift[0] ^ crc[31]}} & 32'h04C11DB7));
-			if (n == 15) begin
-				shift <= next_byte;
-				ptr <= ptr + 1;
-				n <= 0;
+		case (state)
+			LINK: shift <= 8'h55;
+			TX_PREAMBLE, TX_SFD, TX_DATA: begin
+				if (n[0])
+					shift <= { 1'b0, shift[7:1] };
+				if (n == 15) begin
+					shift <= next_byte;
+				end
 			end
-		end
-
-		if (state == TX_CRC) begin
-			if (n[0])
-				crc <= crc << 1;
-		end
+		endcase
+		
+		case (state)
+			TX_SFD: crc <= 32'hFFFFFFFF;
+			TX_DATA: if (!n[0]) crc <= ({crc[30:0],1'b0} ^ ({32{shift[0] ^ crc[31]}} & 32'h04C11DB7));
+			TX_CRC: if (n[0]) crc <= crc << 1;
+		endcase
 
 		case (state)
-			LINK: begin
-				if (start) begin
-					state <= TX_PREAMBLE;
-					next_byte <= 8'h55;
-					shift <= 8'h55;
-					n <= 0;
-					ptr <= 0;
-				end
-			end
-			TX_PREAMBLE: begin
-				if (ptr == 6) begin
-					if (n == 14) begin
-						next_byte <= 8'hD5;
-					end
-					if (n == 15) begin
-						state <= TX_SFD;
-					end
-				end
-			end
-			TX_SFD: begin
-				if(n == 14) begin
-					next_byte <= frame[0];
-				end
-				if(n == 15) begin
-					ptr <= 1;
-					state <= TX_DATA;
-					crc <= 32'hFFFFFFFF;
-				end
-			end
-			TX_DATA: begin
-				if (n == 14) begin
-					next_byte <= frame[ptr];
-				end
-				if (n == 15) begin
-					if(ptr == len) begin
-						state <= TX_CRC;
-					end
-				end
-			end
-			TX_CRC: begin
-				if (n == 63) begin
-					state <= IDLE;
-					n <= 0;
-				end
-			end
-			IDLE: begin
-				if (n == 5) begin
-					state <= IPG;
-				end
-			end
-			IPG: begin
-				if (n == 192) begin
-					state <= LINK;
-				end
-			end
+			LINK: next_byte <= 8'h55;
+			TX_PREAMBLE: if( ptr == 6) next_byte <= 8'hD5;
+			TX_SFD: next_byte <= frame[0];
+			TX_DATA: next_byte <= frame[ptr];
+		endcase
+
+		case (state)
+			LINK: if (start) state <= TX_PREAMBLE;
+			TX_PREAMBLE: if (ptr == 6 && n == 15) state <= TX_SFD;
+			TX_SFD: if(n == 15) state <= TX_DATA;
+			TX_DATA: if (ptr == len && n == 15) state <= TX_CRC;
+			TX_CRC: if (n == 63) state <= IDLE;
+			IDLE: if (n == 5) state <= IPG;
+			IPG: if (n == 192) state <= LINK;
 		endcase
 
 	end

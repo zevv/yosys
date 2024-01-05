@@ -31,6 +31,8 @@ module test();
 	always @(posedge clk) begin
 		clk_eth = ~clk_eth;
 	end
+
+	wire error = tx_eth != tx_eth2;
 	
 	wire tx_eth;
 	wire tx_eth2;
