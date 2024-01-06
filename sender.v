@@ -49,6 +49,7 @@ module sender(input clk,
    always @(posedge clk) begin
 
       case (state)
+
          0: begin
             if(au_en_pcm) begin
                bram_wr_data <= au_pcm[7:0];
