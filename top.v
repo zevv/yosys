@@ -1,7 +1,6 @@
 
 `default_nettype none
 
-`include "ethernet.v"
 `include "sender.v"
 
 
@@ -15,13 +14,13 @@ module top(
    input IOT_50B,
 );
    
-   assign RGB2 = ~tx_busy;
+   assign RGB2 = ~eth_tx_busy;
    assign IOB_8A = tx_p;
    assign IOB_9B = tx_n;
    assign IOB_23B = tx_p;
    assign IOT_37A = debug;
-   //assign IOT_41A = clk_pdm;
-   //assign pdm_data = IOT_50B;
+   assign IOT_41A = au_pdm_clk;
+   assign au_pdm_data = IOT_50B;
 
    wire clk_48mhz;
    wire clk;
@@ -57,14 +56,20 @@ module top(
 
    wire debug;
    
-   wire tx_eth;
-   wire tx_busy;
-   sender sender (clk, clk_eth, tx_eth, tx_busy);
+   wire eth_tx;
+   wire eth_tx_busy;
+   wire au_pdm_clk;
+   wire au_pdm_data;
+   sender sender (clk,
+                  clk_eth, eth_tx, eth_tx_busy,
+                  au_pdm_clk, au_pdm_data,
+                  debug
+               );
 
    wire tx_p;
    wire tx_n;
 
-   assign tx_p = tx_eth;
+   assign tx_p = eth_tx;
    assign tx_n = ~tx_p;
    
 

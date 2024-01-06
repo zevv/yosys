@@ -1,7 +1,6 @@
 
 `default_nettype none
 
-`include "ethernet.v"
 `include "sender.v"
 `include "ethernet-stolen.v"
 
@@ -14,19 +13,24 @@ module test();
    initial begin
       $dumpfile("test.vcd");
       $dumpvars(0, test);
-      #100000 $finish;
-   end
+
+		# 3
+		`include "din.v"
+		# 1 $finish();
+	end
+
+   reg [7:0] din = 0;
 
    reg [11:0] cnt = 0;
    reg start1 = 0;
    reg start2 = 0;
-   always @(posedge clk_eth) begin
+   always @(posedge eth_clk_en) begin
       cnt <= cnt + 1;
       start1 <= (cnt == 30);
       start2 <= (cnt == 32);
    end
 
-   reg clk_eth = 0;
+   reg eth_clk_en = 0;
 
 
    wire error = tx_eth != tx_eth2;
@@ -34,12 +38,20 @@ module test();
    wire tx_eth;
    wire tx_eth2;
    wire tx_led;
-   eth_tx et1(clk_eth, start1, tx_eth);
-   sender sender (clk, clk_eth, tx_eth2, tx_led);
+   eth_tx et1(eth_clk_en, start1, tx_eth);
+   wire au_pdm_clk;
+   wire au_pdm_data;
+   wire debug;
+
+   assign au_pdm_data = din[0];
+
+   sender sender (clk, eth_clk_en,
+                  tx_eth2, tx_led,
+                  au_pdm_clk, au_pdm_data, debug);
 
 
    always @(posedge clk) begin
-      clk_eth <= ~clk_eth;
+      eth_clk_en <= ~eth_clk_en;
    end
    
 

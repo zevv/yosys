@@ -14,9 +14,22 @@ module bram(
    integer i;
 
    initial begin
-      for(i = 0; i < SIZE; i=i+1) begin
-         memory[i] = i;
-      end
+      memory[0] = 8'h00;
+      memory[1] = 8'h01;
+      memory[2] = 8'h02;
+      memory[3] = 8'h02;
+      memory[4] = 8'h03;
+      memory[5] = 8'h04;
+
+      memory[6] = 8'h05;
+      memory[7] = 8'h06;
+      memory[8] = 8'h07;
+      memory[9] = 8'h08;
+      memory[10] = 8'h09;
+      memory[11] = 8'h0a;
+
+      memory[12] = 8'h42;
+      memory[13] = 8'h42;
       // rd_data = 0; //should not exist if we want bram to be inferred
    end
 

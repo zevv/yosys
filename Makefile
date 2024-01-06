@@ -11,6 +11,7 @@ SRCS += top.v
 SRCS += ethernet.v
 SRCS += sender.v
 SRCS += bram.v
+SRCS += audio.v
 
 
 all: $(BIN)

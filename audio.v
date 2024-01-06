@@ -84,7 +84,7 @@ module cic #(parameter W=16)
 	comb #(.W(W)) comb0 (clk, en_pcm, d2, c1);
 	comb #(.W(W)) comb1 (clk, en_pcm, c1, c2);
 
-	assign out = c2;
+	assign out = c2 * 64;
 
 	always @(posedge clk)
 	begin
