@@ -39,7 +39,7 @@ module sender(input clk,
                     au_en_pcm, au_en_left, au_en_right);
 
    wire signed [15:0] au_pcm;
-   cic cic0 (clk, au_en_left, au_en_pcm, au_pdm_data, au_pcm);
+   audio_filter af (clk, au_en_left, au_en_pcm, au_pdm_data, au_pcm);
 
 
    assign debug = au_en_pcm;

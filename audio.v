@@ -69,10 +69,11 @@ module comb #(parameter W=16)
 endmodule
 
 
-module cic #(parameter W=32)
+module audio_filter #(parameter W=24)
 	(input clk, input en_sample, input en_pcm, input din, output reg signed [15:0] out);
 
    // Four stage CIC filter to low pass filter and downsample PDM
+
 	reg signed [W-1:0] d0 = 0;
 	wire signed [W-1:0] d1;
 	wire signed [W-1:0] d2;
@@ -95,6 +96,7 @@ module cic #(parameter W=32)
 	comb #(.W(W)) comb3 (clk, en_pcm, d7, d8);
 
    // DC rejection filter to remove wandering DC offset
+   // y(n) = x(n) - x(n-1) + R * y(n-1)
 
    reg signed [W-1:0] y0 = 0;
    reg signed [W-1:0] y1 = 0;
@@ -111,7 +113,7 @@ module cic #(parameter W=32)
       if (en_pcm) begin
          x0 <= d8;
          x1 <= x0;
-         y0 <= (x0 - x1) + (y1 >>> 1);
+         y0 <= (x0 - x1) + (y1 >>> 1) + (y1 >>> 2) + (y1 >>> 3) + (y1 >>> 4) + (y1 >>> 5) + (y1 >>> 6);
          y1 <= y0;
          out <= y0 >> 5;
       end
