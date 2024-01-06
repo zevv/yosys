@@ -1,4 +1,6 @@
 
+`default_nettype none
+
 `include "ethernet.v"
 `include "sender.v"
 `include "ethernet-stolen.v"

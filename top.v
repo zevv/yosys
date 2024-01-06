@@ -1,4 +1,6 @@
 
+`default_nettype none
+
 `include "ethernet.v"
 `include "sender.v"
 
@@ -7,8 +9,19 @@
 module top(
    output IOB_8A, output IOB_23B,
    output IOB_9B,
-   output RGB2
+   output RGB2,
+   output IOT_37A,
+   output IOT_41A,
+   input IOT_50B,
 );
+   
+   assign RGB2 = ~tx_busy;
+   assign IOB_8A  = tx_p;
+   assign IOB_9B  = tx_n;
+   assign IOB_23B = tx_p;
+   assign IOT_37A = debug;
+   //assign IOT_41A = clk_pdm;
+   //assign pdm_data = IOT_50B;
 
    wire clk_48mhz;
    wire clk;
@@ -20,12 +33,13 @@ module top(
    );
 
 
+   wire locked;
    SB_PLL40_CORE #(
       .FEEDBACK_PATH("SIMPLE"),
-      .DIVR(4'b0010),      // DIVR =  2
-      .DIVF(7'b0100111),   // DIVF = 39
-      .DIVQ(3'b100),    // DIVQ =  4
-      .FILTER_RANGE(3'b001)   // FILTER_RANGE = 1
+      .DIVR(4'b0010),
+      .DIVF(7'b0100111),
+      .DIVQ(3'b100), 
+      .FILTER_RANGE(3'b001)
    ) uut (
       .LOCK(locked),
       .RESETB(1'b1),
@@ -35,16 +49,17 @@ module top(
    );
 
 
-   wire tx_link;
-
    reg clk_eth = 0;
-
    always @(posedge clk) begin
       clk_eth <= ~clk_eth;
    end
+
+
+   wire debug;
    
    wire tx_eth;
-   sender sender (clk, clk_eth, tx_eth, RGB2);
+   wire tx_busy;
+   sender sender (clk, clk_eth, tx_eth, tx_busy);
 
    wire tx_p;
    wire tx_n;
@@ -52,10 +67,8 @@ module top(
    assign tx_p = tx_eth;
    assign tx_n = ~tx_p;
    
-   assign IOB_8A  = tx_p;
-   assign IOB_9B  = tx_n;
-   assign IOB_23B = tx_p;
 
 endmodule
+
 
 // vi: ft=verilog ts=3 sw=3 et

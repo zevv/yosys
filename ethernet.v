@@ -1,7 +1,9 @@
 
+`default_nettype none
+
 /* verilator lint_off DECLFILENAME */
 
-module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, input w_en, input start, output reg tx = 0, output tx_led);
+module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, input w_en, input start, output reg tx_p = 0, output tx_busy);
    
    reg [10:0] len = 'd200;
    reg [7:0] frame [0:'hff];
@@ -24,7 +26,7 @@ module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, 
    reg [31:0] crc2 = 0;
 
    wire empty = (n == 15);
-   assign tx_led = (state == LINK);
+   assign tx_busy = ~(state == LINK);
 
    always @(posedge clk) begin
 
@@ -53,13 +55,13 @@ module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, 
          endcase
 
          case (state)
-            LINK: tx <= (link_timer == 0);
-            PREAMBLE: tx <= data_out[0] ^ !n[0];
-            SFD: tx <= data_out[0] ^ !n[0];
-            DATA: tx <= data_out[0] ^ !n[0];
-            CRC: tx <= crc[31] ^ n[0];
-            IDLE: tx <= 1;
-            IPG: tx <= 0;
+            LINK: tx_p <= (link_timer == 0);
+            PREAMBLE: tx_p <= data_out[0] ^ !n[0];
+            SFD: tx_p <= data_out[0] ^ !n[0];
+            DATA: tx_p <= data_out[0] ^ !n[0];
+            CRC: tx_p <= crc[31] ^ n[0];
+            IDLE: tx_p <= 1;
+            IPG: tx_p <= 0;
          endcase
 
          case (state)

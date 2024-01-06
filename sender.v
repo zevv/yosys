@@ -1,5 +1,7 @@
 
-module sender(input clk, input clk_en, output tx, output tx_led);
+`default_nettype none
+
+module sender(input clk, input clk_en, output tx_p, output tx_busy);
 
    reg [20:0] tick = 0;
    reg start = 0;
@@ -8,7 +10,7 @@ module sender(input clk, input clk_en, output tx, output tx_led);
    reg [7:0] eth_w_data = 0;
    reg [31:0] flop = 0;
 
-   eth_tx2 et(clk, clk_en, eth_w_addr, eth_w_data, eth_w_en, start, tx, tx_led);
+   eth_tx2 et(clk, clk_en, eth_w_addr, eth_w_data, eth_w_en, start, tx_p, tx_busy);
 
    always @(posedge clk) begin
       if (clk_en) begin
