@@ -69,26 +69,30 @@ module comb #(parameter W=16)
 endmodule
 
 
-module cic #(parameter W=18)
+module cic #(parameter W=22)
 	(input clk, input en_sample, input en_pcm, input din, output signed [W-1:0] out);
 
 	reg signed [W-1:0] d0 = 0;
 	wire signed [W-1:0] d1;
 	wire signed [W-1:0] d2;
 	wire signed [W-1:0] d3;
+	wire signed [W-1:0] d4;
 	wire signed [W-1:0] c1;
 	wire signed [W-1:0] c2;
 	wire signed [W-1:0] c3;
+	wire signed [W-1:0] c4;
 
 	integrator #(.W(W)) int0 (clk, en_sample, d0, d1);
 	integrator #(.W(W)) int1 (clk, en_sample, d1, d2);
 	integrator #(.W(W)) int2 (clk, en_sample, d2, d3);
+	integrator #(.W(W)) int3 (clk, en_sample, d3, d4);
 
-	comb #(.W(W)) comb0 (clk, en_pcm, d3, c1);
-	comb #(.W(W)) comb1 (clk, en_pcm, c1, c2);
+	comb #(.W(W)) comb0 (clk, en_pcm, d4, c1);
+	comb #(.W(W)) comb1 (clk, en_pcm, d1, c2);
 	comb #(.W(W)) comb2 (clk, en_pcm, c2, c3);
+	comb #(.W(W)) comb3 (clk, en_pcm, c3, c4);
 
-	assign out = c3 / 2;
+	assign out = c4 / 32;
 
 	always @(posedge clk)
 	begin
