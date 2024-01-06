@@ -16,6 +16,7 @@ module test();
 
 		# 3
 		`include "din.v"
+      # 100000
 		# 1 $finish();
 	end
 

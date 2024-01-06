@@ -65,8 +65,8 @@ module sender(input clk,
          2: begin
             bram_wr_en <= 0;
             bram_wr_addr <= bram_wr_addr + 1;
-            if (bram_wr_addr >= 512) begin
-               bram_wr_addr <= 16;
+            if (bram_wr_addr >= 510) begin
+               bram_wr_addr <= 14;
                eth_start <= 1;
                state <= 3;
             end else begin

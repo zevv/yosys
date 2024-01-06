@@ -6,7 +6,7 @@
 module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg en_pcm = 0, output reg en_left = 0, output reg en_right = 0);
 
 	reg [8:0] cnt = 0;
-	reg [5:0] div = 0;
+	reg [6:0] div = 0;
 
 	always @(posedge clk)
 	begin
@@ -33,7 +33,7 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg en_pcm = 0, o
           19: begin
              div <= div + 1;
              cnt <= 0;
-             if (div == 63) en_pcm <= 1;
+             if (div == 127) en_pcm <= 1;
           end
     endcase
 
@@ -69,22 +69,26 @@ module comb #(parameter W=16)
 endmodule
 
 
-module cic #(parameter W=16)
+module cic #(parameter W=18)
 	(input clk, input en_sample, input en_pcm, input din, output signed [W-1:0] out);
 
 	reg signed [W-1:0] d0 = 0;
 	wire signed [W-1:0] d1;
 	wire signed [W-1:0] d2;
+	wire signed [W-1:0] d3;
 	wire signed [W-1:0] c1;
 	wire signed [W-1:0] c2;
+	wire signed [W-1:0] c3;
 
 	integrator #(.W(W)) int0 (clk, en_sample, d0, d1);
 	integrator #(.W(W)) int1 (clk, en_sample, d1, d2);
+	integrator #(.W(W)) int2 (clk, en_sample, d2, d3);
 
-	comb #(.W(W)) comb0 (clk, en_pcm, d2, c1);
+	comb #(.W(W)) comb0 (clk, en_pcm, d3, c1);
 	comb #(.W(W)) comb1 (clk, en_pcm, c1, c2);
+	comb #(.W(W)) comb2 (clk, en_pcm, c2, c3);
 
-	assign out = c2 * 64;
+	assign out = c3 / 2;
 
 	always @(posedge clk)
 	begin
