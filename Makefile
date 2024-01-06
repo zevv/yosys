@@ -10,6 +10,7 @@ VCD := $(NAME).vcd
 SRCS += top.v
 SRCS += ethernet.v
 SRCS += sender.v
+SRCS += bram.v
 
 
 all: $(BIN)
@@ -20,7 +21,7 @@ $(BIN): $(ASC)
 	icepack $(NAME).asc $@
 
 $(JSON): $(SRCS)
-	yosys -Q -T -p "synth_ice40 -top top -json $(NAME).json" top.v
+	yosys -Q -T -p "synth_ice40 -noflatten -top top -json $(NAME).json" top.v
 
 $(ASC): $(JSON)
 	nextpnr-ice40 --freq 48 --package sg48 --up5k --json $(JSON) --pcf $(PCF) --asc $(ASC)

@@ -3,18 +3,16 @@
 
 /* verilator lint_off DECLFILENAME */
 
-module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, input w_en, input start, output reg tx_p = 0, output tx_busy);
+module eth_tx2(
+   input clk, input clk_en, 
+   input start, 
+   output reg tx_p = 0, output tx_busy,
+   output reg bram_rd_en = 0, output reg [9:0] bram_rd_addr = 0, input [7:0] bram_rd_data
+);
    
-   reg [10:0] len = 'd200;
-   reg [7:0] frame [0:'hff];
-   integer k;
-   initial begin
-      //$readmemh("zeros.bin", frame);
-      for (k=0; k<200; k=k+1) frame[k] = 0;
-   end
-
    localparam LINK = 0, PREAMBLE = 1, SFD = 2, DATA = 3, CRC = 4, IDLE = 5, IPG = 6;
    localparam CRC_INIT = 32'hFFFFFFFF, CRC_POLY = 32'h04C11DB7;
+   localparam len = 'd512;
 
    reg [19:0] link_timer = 0;
    reg [2:0] state = LINK;
@@ -26,13 +24,10 @@ module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, 
    reg [31:0] crc2 = 0;
 
    wire empty = (n == 15);
+
    assign tx_busy = ~(state == LINK);
 
    always @(posedge clk) begin
-
-      if (w_en) begin
-         frame[w_addr] <= w_data;
-      end
 
       if(clk_en) begin
 
@@ -77,12 +72,22 @@ module eth_tx2(input clk, input clk_en, input [7:0] w_addr, input [7:0] w_data, 
             DATA: if (!n[0]) crc <= (crc << 1) ^ ( {32{data_out[0] ^ crc[31]}} & CRC_POLY );
             CRC: if (n[0]) crc <= crc << 1;
          endcase
+         
+         case (state)
+            LINK: data_next <= 8'h55;
+            SFD: bram_rd_en <= (n == 13 || n == 14);
+            DATA: bram_rd_en <= (n == 14);
+         endcase
+         
+         case (state)
+            LINK, PREAMBLE: bram_rd_addr <= 0;
+            SFD, DATA: if(n == 14) bram_rd_addr <= bram_rd_addr + 1;
+         endcase
 
          case (state)
             LINK: data_next <= 8'h55;
             PREAMBLE: if(ptr == 6) data_next <= 8'hD5;
-            SFD: data_next <= frame[0];
-            DATA: data_next <= frame[ptr];
+            SFD, DATA: if(n == 14) data_next <= bram_rd_data[7:0];
          endcase
 
          case (state)

@@ -16,8 +16,8 @@ module top(
 );
    
    assign RGB2 = ~tx_busy;
-   assign IOB_8A  = tx_p;
-   assign IOB_9B  = tx_n;
+   assign IOB_8A = tx_p;
+   assign IOB_9B = tx_n;
    assign IOB_23B = tx_p;
    assign IOT_37A = debug;
    //assign IOT_41A = clk_pdm;
