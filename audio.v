@@ -70,29 +70,36 @@ endmodule
 
 
 module cic #(parameter W=32)
-	(input clk, input en_sample, input en_pcm, input din, output signed [15:0] out);
+	(input clk, input en_sample, input en_pcm, input din, output reg signed [15:0] out);
 
+   // Four stage CIC filter to low pass filter and downsample PDM
 	reg signed [W-1:0] d0 = 0;
 	wire signed [W-1:0] d1;
 	wire signed [W-1:0] d2;
 	wire signed [W-1:0] d3;
 	wire signed [W-1:0] d4;
-	wire signed [W-1:0] c1;
-	wire signed [W-1:0] c2;
-	wire signed [W-1:0] c3;
-	wire signed [W-1:0] c4;
 
 	integrator #(.W(W)) int0 (clk, en_sample, d0, d1);
 	integrator #(.W(W)) int1 (clk, en_sample, d1, d2);
 	integrator #(.W(W)) int2 (clk, en_sample, d2, d3);
 	integrator #(.W(W)) int3 (clk, en_sample, d3, d4);
+	
+   wire signed [W-1:0] d5;
+	wire signed [W-1:0] d6;
+	wire signed [W-1:0] d7;
+	wire signed [W-1:0] d8;
 
-	comb #(.W(W)) comb0 (clk, en_pcm, d4, c1);
-	comb #(.W(W)) comb1 (clk, en_pcm, c1, c2);
-	comb #(.W(W)) comb2 (clk, en_pcm, c2, c3);
-	comb #(.W(W)) comb3 (clk, en_pcm, c3, c4);
+	comb #(.W(W)) comb0 (clk, en_pcm, d4, d5);
+	comb #(.W(W)) comb1 (clk, en_pcm, d5, d6);
+	comb #(.W(W)) comb2 (clk, en_pcm, d6, d7);
+	comb #(.W(W)) comb3 (clk, en_pcm, d7, d8);
 
-	assign out = c4 >>> 6;
+   // DC rejection filter to remove wandering DC offset
+
+   reg signed [W-1:0] y0 = 0;
+   reg signed [W-1:0] y1 = 0;
+   reg signed [W-1:0] x0 = 0;
+   reg signed [W-1:0] x1 = 0;
 
 	always @(posedge clk)
 	begin
@@ -100,6 +107,14 @@ module cic #(parameter W=32)
          d0 <= +1;
       else
          d0 <= -1;
+
+      if (en_pcm) begin
+         x0 <= d8;
+         x1 <= x0;
+         y0 <= (x0 - x1) + (y1 >>> 1);
+         y1 <= y0;
+         out <= y0 >> 5;
+      end
 	end
 
 endmodule
