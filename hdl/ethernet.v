@@ -12,7 +12,7 @@ module eth_tx2(
    
    localparam IDLE = 0, PREAMBLE = 1, SFD = 2, DATA = 3, CRC = 4, SOI = 5, IPG = 6;
    localparam CRC_INIT = 32'hFFFFFFFF, CRC_POLY = 32'h04C11DB7;
-   localparam len = 'd126;
+   localparam len = 'd526;
 
    reg [19:0] idle_timer = 0;
    reg [2:0] state = IDLE;

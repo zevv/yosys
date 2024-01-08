@@ -13,6 +13,8 @@ SRCS += sender.v
 SRCS += bram.v
 SRCS += audio.v
 
+YOSYSFLAGS := -Q -T
+YOSYSCMD := synth_ice40 -top top -json $(NAME).json -noflatten
 NEXTPNRFLAGS := --freq 48 --package sg48 --up5k --detailed-timing-report
 
 all: $(BIN)
@@ -23,7 +25,7 @@ $(BIN): $(ASC)
 	icepack $(NAME).asc $@
 
 $(JSON): $(SRCS)
-	yosys -Q -T -p "synth_ice40 -top top -json $(NAME).json" top.v
+	yosys $(YOSYSFLAGS) -p "$(YOSYSCMD)" top.v
 
 $(ASC): $(JSON)
 	nextpnr-ice40 $(NEXTPNRFLAGS) --json $(JSON) --pcf $(PCF) --asc $(ASC) -l $(NAME).log

@@ -6,7 +6,7 @@ rx: rx.c
 	gcc -o rx rx.c
 
 run: rx
-	sudo ./rx enx00e04c680290 | play -t raw -r 15625 -b 16 -e signed-integer -L -c 2 --buffer 128 -
+	sudo ./rx enx00e04c680290 | play -t raw -r 15625 -b 16 -e signed-integer -L -c 16 --buffer 16384 -
 
 baudline: rx
 	sudo ./rx enx00e04c680290 | baudline -stdin -channels 2 -format le16 -record
