@@ -33,7 +33,7 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
           19: begin
              div <= div + 1;
              cnt <= 0;
-             if (div == 127) stb_pcm <= 1;
+             if (div == 0) stb_pcm <= 1;
           end
     endcase
 

@@ -16,7 +16,7 @@ module eth_tx2(
 
    reg [19:0] idle_timer = 0;
    reg [2:0] state = IDLE;
-   reg [18:0] n = 0;
+   reg [7:0] n = 0;
    reg [10:0] ptr = 0;
    reg [7:0] data_next = 0;
    reg [7:0] data_out = 0;
