@@ -42,7 +42,7 @@ module eth_tx2(
 
          n <= n + 1;
          case (state)
-            IDLE: if (start) n <= 0;
+            IDLE: n <= 0;
             PREAMBLE, SFD, DATA: if (empty) n <= 0;
             CRC: if (n == 63) n <= 0;
          endcase

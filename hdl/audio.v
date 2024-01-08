@@ -3,7 +3,7 @@
 
 
 
-module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg en_pcm = 0, output reg en_left = 0, output reg en_right = 0);
+module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, output reg stb_left = 0, output reg stb_right = 0);
 
 	reg [8:0] cnt = 0;
 	reg [6:0] div = 0;
@@ -11,9 +11,9 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg en_pcm = 0, o
 	always @(posedge clk)
 	begin
 
-		en_left <= 0;
-		en_right <= 0;
-		en_pcm <= 0;
+		stb_left <= 0;
+		stb_right <= 0;
+		stb_pcm <= 0;
 
       cnt <= cnt + 1;
 
@@ -22,18 +22,18 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg en_pcm = 0, o
              clk_pdm <= 0;
           end
           7: begin
-             en_left <= 1;
+             stb_left <= 1;
           end
           10: begin
             clk_pdm <= 1;
           end
           18: begin
-             en_right <= 1;
+             stb_right <= 1;
           end
           19: begin
              div <= div + 1;
              cnt <= 0;
-             if (div == 127) en_pcm <= 1;
+             if (div == 127) stb_pcm <= 1;
           end
     endcase
 
@@ -70,30 +70,23 @@ endmodule
 
 
 module audio_filter #(parameter W=24)
-	(input clk, input en_sample, input en_pcm, input din, output reg signed [15:0] out);
+	(input clk, input stb_sample, input stb_pcm, input din, output reg signed [15:0] out);
 
    // Four stage CIC filter to low pass filter and downsample PDM
 
-	reg signed [W-1:0] d0 = 0;
-	wire signed [W-1:0] d1;
-	wire signed [W-1:0] d2;
-	wire signed [W-1:0] d3;
-	wire signed [W-1:0] d4;
+	wire signed [W-1:0] d[8:0];
 
-	integrator #(.W(W)) int0 (clk, en_sample, d0, d1);
-	integrator #(.W(W)) int1 (clk, en_sample, d1, d2);
-	integrator #(.W(W)) int2 (clk, en_sample, d2, d3);
-	integrator #(.W(W)) int3 (clk, en_sample, d3, d4);
+   assign d[0] = din ? +1 : -1;
+
+	integrator #(.W(W)) int0 (clk, stb_sample, d[0], d[1]);
+	integrator #(.W(W)) int1 (clk, stb_sample, d[1], d[2]);
+	integrator #(.W(W)) int2 (clk, stb_sample, d[2], d[3]);
+	integrator #(.W(W)) int3 (clk, stb_sample, d[3], d[4]);
 	
-   wire signed [W-1:0] d5;
-	wire signed [W-1:0] d6;
-	wire signed [W-1:0] d7;
-	wire signed [W-1:0] d8;
-
-	comb #(.W(W)) comb0 (clk, en_pcm, d4, d5);
-	comb #(.W(W)) comb1 (clk, en_pcm, d5, d6);
-	comb #(.W(W)) comb2 (clk, en_pcm, d6, d7);
-	comb #(.W(W)) comb3 (clk, en_pcm, d7, d8);
+	comb #(.W(W)) comb0 (clk, stb_pcm, d[4], d[5]);
+	comb #(.W(W)) comb1 (clk, stb_pcm, d[5], d[6]);
+	comb #(.W(W)) comb2 (clk, stb_pcm, d[6], d[7]);
+	comb #(.W(W)) comb3 (clk, stb_pcm, d[7], d[8]);
 
    // DC rejection filter to remove wandering DC offset
    // y(n) = x(n) - x(n-1) + R * y(n-1)
@@ -105,13 +98,9 @@ module audio_filter #(parameter W=24)
 
 	always @(posedge clk)
 	begin
-      if (din == 0)
-         d0 <= +1;
-      else
-         d0 <= -1;
 
-      if (en_pcm) begin
-         x0 <= d8;
+      if (stb_pcm) begin
+         x0 <= d[8];
          x1 <= x0;
          y0 <= (x0 - x1) + (y1 >>> 1);
          y1 <= y0;

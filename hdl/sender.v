@@ -32,19 +32,19 @@ module sender(input clk,
               bram_rd_en, bram_rd_addr, bram_rd_data);
 
 
-   wire au_en_pcm;
-   wire au_en_left;
-   wire au_en_right;
+   wire au_stb_pcm;
+   wire au_stb_left;
+   wire au_stb_right;
    audio_clk_gen ag(clk, au_pdm_clk,
-                    au_en_pcm, au_en_left, au_en_right);
+                    au_stb_pcm, au_stb_left, au_stb_right);
 
    wire signed [15:0] au_pcm;
    wire signed [15:0] au_pcm1;
-   audio_filter af0 (clk, au_en_left,  au_en_pcm, au_pdm_data, au_pcm);
-   audio_filter af1 (clk, au_en_right, au_en_pcm, au_pdm_data, au_pcm1);
+   audio_filter af0 (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm);
+   audio_filter af1 (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm1);
 
 
-   assign debug = au_en_pcm;
+   assign debug = au_stb_pcm;
 
 
    reg [4:0] state = 0;
@@ -52,7 +52,7 @@ module sender(input clk,
 
       case (state)
          0: begin
-            if(au_en_pcm) begin
+            if(au_stb_pcm) begin
                state <= 1;
             end
          end
