@@ -40,25 +40,10 @@ module sender(input clk,
 
    wire signed [15:0] au_pcm[16];
 
-   assign au_pcm[2] = 2;
-   assign au_pcm[3] = 3;
-   assign au_pcm[4] = 4;
-   assign au_pcm[5] = 5;
-   assign au_pcm[6] = 6;
-   assign au_pcm[7] = 7;
-   assign au_pcm[8] = 8;
-   assign au_pcm[9] = 9;
-   assign au_pcm[10] = 10;
-   assign au_pcm[11] = 11;
-   assign au_pcm[12] = 12;
-   assign au_pcm[13] = 13;
-   assign au_pcm[14] = 14;
-   assign au_pcm[15] = 15;
-
    audio_filter af00l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[0]);
    audio_filter af00r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[1]);
-   // audio_filter af01l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[2]);
-   // audio_filter af01r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[3]);
+   audio_filter af01l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[2]);
+   audio_filter af01r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[3]);
    // audio_filter af02l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[4]);
    // audio_filter af02r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[5]);
    // audio_filter af03l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[6]);

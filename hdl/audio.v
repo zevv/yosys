@@ -69,8 +69,8 @@ module comb #(parameter W=16)
 endmodule
 
 
-module audio_filter #(parameter W=24)
-	(input clk, input stb_sample, input stb_pcm, input din, output reg signed [15:0] out);
+module audio_filter #(parameter W=22)
+	(input clk, input stb_sample, input stb_pcm, input din, output signed [15:0] out);
 
    // Four stage CIC filter to low pass filter and downsample PDM
 
@@ -91,20 +91,21 @@ module audio_filter #(parameter W=24)
    // DC rejection filter to remove wandering DC offset
    // y(n) = x(n) - x(n-1) + R * y(n-1)
 
-   reg signed [W-1:0] y0 = 0;
-   reg signed [W-1:0] y1 = 0;
-   reg signed [W-1:0] x0 = 0;
-   reg signed [W-1:0] x1 = 0;
+   reg signed [15:0] y0 = 0;
+   reg signed [15:0] y1 = 0;
+   reg signed [15:0] x0 = 0;
+   reg signed [15:0] x1 = 0;
+
+   assign out = y0;
 
 	always @(posedge clk)
 	begin
 
       if (stb_pcm) begin
-         x0 <= d[8];
+         x0 <= d[8] >>> 5;
          x1 <= x0;
          y0 <= (x0 - x1) + (y1 >>> 1);
          y1 <= y0;
-         out <= y0 >>> 5;
       end
 	end
 
