@@ -69,7 +69,7 @@ module comb #(parameter W=16)
 endmodule
 
 
-module audio_filter #(parameter W=22)
+module audio_filter #(parameter W=21)
 	(input clk, input stb_sample, input stb_pcm, input din, output signed [15:0] out);
 
    // Four stage CIC filter to low pass filter and downsample PDM
