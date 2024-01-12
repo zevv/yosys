@@ -42,72 +42,56 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
 endmodule
 
 
-module integrator #(parameter W=16)
-	(input clk, input en, input signed [W-1:0] din, output reg signed [W-1:0] dout = 0);
-
-	always @(posedge clk)
-	begin
-      if (en)
-         dout <= dout + din;
-	end
-
-endmodule
-
-
-module comb #(parameter W=16)
-	(input clk, input en, input signed [W-1:0] din, output reg signed [W-1:0] dout = 0);
-
-	reg signed [W-1:0] din_prev = 0;
-
-	always @(posedge clk)
-	begin
-      if (en) begin
-         dout <= din - din_prev;
-         din_prev <= din;
-      end
-	end
-endmodule
-
-
 module audio_filter #(parameter W=21)
 	(input clk, input stb_sample, input stb_pcm, input din, output signed [15:0] out);
 
    // Four stage CIC filter to low pass filter and downsample PDM
 
 	wire signed [W-1:0] d[8:0];
+   reg signed [W-1:0] e[0:3];
 
-   assign d[0] = din ? +1 : -1;
+   initial begin
+      e[0] <= 0;
+      e[1] <= 0;
+      e[2] <= 0;
+      e[3] <= 0;
+   end
 
-	integrator #(.W(W)) int0 (clk, stb_sample, d[0], d[1]);
-	integrator #(.W(W)) int1 (clk, stb_sample, d[1], d[2]);
-	integrator #(.W(W)) int2 (clk, stb_sample, d[2], d[3]);
-	integrator #(.W(W)) int3 (clk, stb_sample, d[3], d[4]);
-	
-	comb #(.W(W)) comb0 (clk, stb_pcm, d[4], d[5]);
-	comb #(.W(W)) comb1 (clk, stb_pcm, d[5], d[6]);
-	comb #(.W(W)) comb2 (clk, stb_pcm, d[6], d[7]);
-	comb #(.W(W)) comb3 (clk, stb_pcm, d[7], d[8]);
-
-   // DC rejection filter to remove wandering DC offset
-   // y(n) = x(n) - x(n-1) + R * y(n-1)
-
-   reg signed [15:0] y0 = 0;
-   reg signed [15:0] y1 = 0;
-   reg signed [15:0] x0 = 0;
-   reg signed [15:0] x1 = 0;
-
-   assign out = y0;
-
-	always @(posedge clk)
-	begin
-
-      if (stb_pcm) begin
-         x0 <= d[8] >>> 5;
-         x1 <= x0;
-         y0 <= (x0 - x1) + (y1 >>> 1);
-         y1 <= y0;
+   always @(posedge clk)
+   begin
+      if(stb_sample) begin
+         e[0] <= e[0] + (din ? +1 : -1);
+         e[1] <= e[1] + e[0];
+         e[2] <= e[2] + e[1];
+         e[3] <= e[3] + e[2];
       end
-	end
+   end
+         
+   // four stage comb filter and down converter
+
+   reg signed [W-1:0] c[0:9];
+   wire signed [W-1:0] fin;
+   assign fin = e[3];
+
+   always @(posedge clk)
+   begin
+      if(stb_pcm) begin
+         c[0] <= fin;
+         c[1] <= c[0] - fin;
+         c[2] <= c[1];
+         c[3] <= c[2] - c[1];
+         c[4] <= c[3];
+         c[5] <= c[4] - c[3];
+         c[6] <= c[5];
+         c[7] <= c[6] - c[5];
+         // One more differenatiaon for DC removal. Why?
+         c[8] <= c[7];
+         c[9] <= c[8] - c[7];
+
+      end
+   end
+
+   assign out = c[9] >>> 5;
 
 endmodule
 
