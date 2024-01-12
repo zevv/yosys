@@ -24,16 +24,14 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
           7: begin
              stb_left <= 1;
           end
-          10: begin
+          8: begin
             clk_pdm <= 1;
           end
-          18: begin
+          15: begin
              stb_right <= 1;
-          end
-          19: begin
-             div <= div + 1;
              cnt <= 0;
-             if (div == 196) begin
+             div <= div + 1;
+             if (div == 124) begin
                 stb_pcm <= 1;
                 div <= 0;
              end
@@ -53,13 +51,6 @@ module audio_filter #(parameter W=24)
 	wire signed [W-1:0] d[8:0];
    reg signed [W-1:0] e[0:3];
 
-   initial begin
-      e[0] <= 0;
-      e[1] <= 0;
-      e[2] <= 0;
-      e[3] <= 0;
-   end
-
    always @(posedge clk)
    begin
       if(stb_sample) begin
@@ -72,29 +63,30 @@ module audio_filter #(parameter W=24)
          
    // four stage comb filter and down converter
 
-   reg signed [W-1:0] c[0:9];
-   wire signed [W-1:0] fin;
-   assign fin = e[3];
+   reg signed [W-1:0] c[0:7];
 
    always @(posedge clk)
    begin
       if(stb_pcm) begin
-         c[0] <= fin;
-         c[1] <= c[0] - fin;
+         c[0] <= e[3];
+         c[1] <= c[0] - e[3];
          c[2] <= c[1];
          c[3] <= c[2] - c[1];
          c[4] <= c[3];
          c[5] <= c[4] - c[3];
          c[6] <= c[5];
          c[7] <= c[6] - c[5];
-         // One more differenatiaon for DC removal. Why?
-         c[8] <= c[7];
-         c[9] <= c[8] - c[7];
-
       end
    end
 
-   assign out = c[9] >>> 8;
+   // DC removal filter
+
+   reg signed[31:0] dc = 0;
+   assign out = c[7][W-1:W-16] - dc[31:16];
+   always @(posedge clk)
+   begin
+      dc <= dc + out;
+   end
 
 endmodule
 

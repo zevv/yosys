@@ -78,7 +78,7 @@ module sender(input clk,
             bram_wr_addr <= bram_wr_addr + 1;
             bram_wr_data <= au_pcm[chan][15:8];
             chan <= chan + 1;
-            if (chan == 15)
+            if (chan == 1)
                state <= 10;
             else
                state <= 1;
