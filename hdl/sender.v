@@ -42,16 +42,16 @@ module sender(input clk,
 
    audio_filter af00l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 0]);
    audio_filter af00r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 1]);
-   audio_filter af01l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 2]);
-   audio_filter af01r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 3]);
-   audio_filter af02l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 4]);
-   audio_filter af02r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 5]);
-   audio_filter af03l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 6]);
-   audio_filter af03r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 7]);
-   audio_filter af04l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 7]);
-   audio_filter af04r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 9]);
-   audio_filter af05l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[10]);
-   audio_filter af05r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[11]);
+//   audio_filter af01l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 2]);
+//   audio_filter af01r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 3]);
+//   audio_filter af02l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 4]);
+//   audio_filter af02r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 5]);
+//   audio_filter af03l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 6]);
+//   audio_filter af03r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 7]);
+//   audio_filter af04l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 7]);
+//   audio_filter af04r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 9]);
+//   audio_filter af05l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[10]);
+//   audio_filter af05r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[11]);
 
    assign debug = au_stb_pcm;
 

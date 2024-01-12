@@ -6,7 +6,7 @@
 module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, output reg stb_left = 0, output reg stb_right = 0);
 
 	reg [8:0] cnt = 0;
-	reg [6:0] div = 0;
+	reg [7:0] div = 0;
 
 	always @(posedge clk)
 	begin
@@ -33,7 +33,10 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
           19: begin
              div <= div + 1;
              cnt <= 0;
-             if (div == 0) stb_pcm <= 1;
+             if (div == 196) begin
+                stb_pcm <= 1;
+                div <= 0;
+             end
           end
     endcase
 
@@ -42,7 +45,7 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
 endmodule
 
 
-module audio_filter #(parameter W=21)
+module audio_filter #(parameter W=24)
 	(input clk, input stb_sample, input stb_pcm, input din, output signed [15:0] out);
 
    // Four stage CIC filter to low pass filter and downsample PDM
@@ -91,7 +94,7 @@ module audio_filter #(parameter W=21)
       end
    end
 
-   assign out = c[9] >>> 5;
+   assign out = c[9] >>> 8;
 
 endmodule
 
