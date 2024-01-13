@@ -81,12 +81,16 @@ module audio_filter #(parameter W=24)
 
    // DC removal filter
 
-   reg signed[23:0] dc = 0;
-   assign out = c[7][W-1:W-16] - dc[23:8];
+   reg signed[15:0] dc = 0;
+   assign out = (c[7] >>> 8) - dc;
+
    always @(posedge clk)
    begin
       if(stb_pcm) begin
-         dc <= dc + out;
+         if (out[15])
+            dc <= dc - 4;
+         else
+            dc <= dc + 4;
       end
    end
 
