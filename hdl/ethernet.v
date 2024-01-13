@@ -24,17 +24,17 @@ module eth_tx2(
    reg [31:0] crc2 = 0;
 
    wire empty = (n == 15);
-
-   assign tx_busy = ~(state == IDLE);
+   wire tx_busy = ~(state == IDLE);
+   wire tlp = (idle_timer == 320000);
 
    always @(posedge clk) begin
 
       if(clk_en) begin
 
-         idle_timer <= idle_timer + 1;
          case (state)
             IDLE: begin
-               if (idle_timer == 320000) begin
+               idle_timer <= idle_timer + 1;
+               if (tlp) begin
                   idle_timer <= 0;
                end
             end
@@ -54,7 +54,7 @@ module eth_tx2(
          endcase
 
          case (state)
-            IDLE: tx_p <= (idle_timer == 0);
+            IDLE: tx_p <= tlp;
             PREAMBLE: tx_p <= data_out[0] ^ !n[0];
             SFD: tx_p <= data_out[0] ^ !n[0];
             DATA: tx_p <= data_out[0] ^ !n[0];
