@@ -21,23 +21,15 @@ module sender(input clk,
 
    // Audio CIC filter first halves (integrators)
    
-   wire [23:0] au_cic[15:0];
-   cic_integrator ci00l(clk, au_stb_left,  au_pdm_data, au_cic[ 0]);
-   cic_integrator ci00r(clk, au_stb_right, au_pdm_data, au_cic[ 1]);
-   // cic_integrator ci01l(clk, au_stb_left,  au_pdm_data, au_cic[ 2]);
-   // cic_integrator ci01r(clk, au_stb_right, au_pdm_data, au_cic[ 3]);
-   // cic_integrator ci02l(clk, au_stb_left,  au_pdm_data, au_cic[ 4]);
-   // cic_integrator ci02r(clk, au_stb_right, au_pdm_data, au_cic[ 5]);
-   // cic_integrator ci03l(clk, au_stb_left,  au_pdm_data, au_cic[ 6]);
-   // cic_integrator ci03r(clk, au_stb_right, au_pdm_data, au_cic[ 7]);
-   // cic_integrator ci04l(clk, au_stb_left,  au_pdm_data, au_cic[ 8]);
-   // cic_integrator ci04r(clk, au_stb_right, au_pdm_data, au_cic[ 9]);
-   // cic_integrator ci05l(clk, au_stb_left,  au_pdm_data, au_cic[10]);
-   // cic_integrator ci05r(clk, au_stb_right, au_pdm_data, au_cic[11]);
-   // cic_integrator ci06l(clk, au_stb_left,  au_pdm_data, au_cic[12]);
-   // cic_integrator ci06r(clk, au_stb_right, au_pdm_data, au_cic[13]);
-   // cic_integrator ci07l(clk, au_stb_left,  au_pdm_data, au_cic[14]);
-   // cic_integrator ci07r(clk, au_stb_right, au_pdm_data, au_cic[15]);
+   wire [23:0] au_cic[31:0];
+
+   genvar i;
+   generate
+      for (i = 0; i < 4; i = i + 1) begin : ci
+         cic_integrator ci_l(clk, au_stb_left,  au_pdm_data, au_cic[i*2 + 0]);
+         cic_integrator ci_r(clk, au_stb_right, au_pdm_data, au_cic[i*2 + 1]);
+      end
+   endgenerate
    
    // Audio CIC filter second half (differentiators)
 
