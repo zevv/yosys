@@ -14,6 +14,8 @@ module bram(
 
    reg [7:0] memory [0:SIZE-1];
 
+   integer i;
+
    initial begin
       memory[0] = 8'h00;
       memory[1] = 8'h01;
@@ -31,6 +33,10 @@ module bram(
 
       memory[12] = 8'h42;
       memory[13] = 8'h42;
+
+      for(i = 14; i < SIZE; i = i + 1) begin
+         memory[i] = 8'h00;
+      end
       // rd_data = 0; //should not exist if we want bram to be inferred
    end
 
@@ -48,13 +54,15 @@ endmodule
 
 module bram24(
    input wire clk,
-   input wire rd_en, input wire [9:0] rd_addr, output reg [23:0] rd_data,
+   input wire rd_en, input wire [9:0] rd_addr, output [23:0] rd_data,
    input wire wr_en, input wire [9:0] wr_addr, input wire [23:0] wr_data
 );
 
-   wire [7:0] rd_data_0 = rd_data[7:0];
-   wire [7:0] rd_data_1 = rd_data[15:8];
-   wire [7:0] rd_data_2 = rd_data[23:16];
+   wire [7:0] rd_data_0;
+   wire [7:0] rd_data_1;
+   wire [7:0] rd_data_2;
+
+   assign rd_data = {rd_data_2, rd_data_1, rd_data_0};
 
    wire [7:0] wr_data_0 = wr_data[7:0];
    wire [7:0] wr_data_1 = wr_data[15:8];

@@ -54,6 +54,13 @@ module cic_integrator(
    reg signed [23:0] e[0:3];
    assign out = e[3];
 
+   initial begin
+      e[0] = 0;
+      e[1] = 0;
+      e[2] = 0;
+      e[3] = 0;
+   end
+
    always @(posedge clk)
    begin
       if(stb_sample) begin
@@ -89,6 +96,10 @@ module audio_filter #(parameter W=24) (
       busy = 0;
       rd_en = 0;
       wr_en = 0;
+      out = 0;
+      ra = 0;
+      rb = 0;
+      rc = 0;
    end
 
    always @(posedge clk)
