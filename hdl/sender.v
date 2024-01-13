@@ -39,9 +39,25 @@ module sender(input clk,
                     au_stb_pcm, au_stb_left, au_stb_right);
 
    wire signed [15:0] au_pcm[16];
+   
+   wire [23:0] bram_af_wr_data;
+   wire [23:0] bram_af_rd_data;
+   wire [9:0] bram_af_rd_addr;
+   wire [9:0] bram_af_wr_addr;
+   wire bram_af_rd_en;
+   wire bram_af_wr_en;
 
-   audio_filter af00l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 0]);
-   audio_filter af00r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 1]);
+   bram24 bram_af0(clk,
+      bram_af_rd_en, bram_af_rd_addr, bram_af_rd_data,
+      bram_af_wr_en, bram_af_wr_addr, bram_af_wr_data);
+
+   audio_filter af00l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 0],
+      bram_af_rd_en, bram_af_rd_addr, bram_af_rd_data,
+      bram_af_wr_en, bram_af_wr_addr, bram_af_wr_data);
+
+   //audio_filter af00r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 1],
+   //   bram_af_rd_en, bram_af_rd_addr, bram_af_rd_data,
+   //   bram_af_wr_en, bram_af_wr_addr, bram_af_wr_data);
 //   audio_filter af01l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 2]);
 //   audio_filter af01r (clk, au_stb_right, au_stb_pcm, au_pdm_data, au_pcm[ 3]);
 //   audio_filter af02l (clk, au_stb_left,  au_stb_pcm, au_pdm_data, au_pcm[ 4]);

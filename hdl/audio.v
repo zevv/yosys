@@ -43,8 +43,13 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
 endmodule
 
 
-module audio_filter #(parameter W=24)
-	(input clk, input stb_sample, input stb_pcm, input din, output signed [15:0] out);
+module audio_filter #(parameter W=24) (
+   input clk, 
+   input stb_sample, input stb_pcm, input din, 
+   output reg signed [15:0] out,
+   output reg rd_en, output reg [9:0] rd_addr, input [23:0] rd_data,
+   output reg wr_en, output reg [9:0] wr_addr, output reg [23:0] wr_data
+);
 
    // Four stage CIC filter to low pass filter and downsample PDM
 
@@ -60,40 +65,94 @@ module audio_filter #(parameter W=24)
          e[3] <= e[3] + e[2];
       end
    end
+
          
    // four stage comb filter and down converter
 
-   reg signed [W-1:0] c[0:7];
+   reg signed [W-1:0] ra, rb, rc;
+   reg [5:0] state = 0;
+   reg [9:0] addr = 0;
+   reg [1:0] stage = 0;
 
    always @(posedge clk)
    begin
-      if(stb_pcm) begin
-         c[0] <= e[3];
-         c[1] <= c[0] - e[3];
-         c[2] <= c[1];
-         c[3] <= c[2] - c[1];
-         c[4] <= c[3];
-         c[5] <= c[4] - c[3];
-         c[6] <= c[5];
-         c[7] <= c[6] - c[5];
-      end
+
+      state <= state + 1;
+      case (state)
+         0: begin
+            if (stb_pcm) begin
+               rb <= e[3];
+               addr <= 0;
+               stage <= 0;
+               state <= 2;
+            end else begin
+               state <= 0;
+            end
+         end
+
+         // Differentiator for each stage
+         2: begin
+            rd_addr <= addr;
+            rd_en <= 1;
+         end
+         3: begin
+            // one clock for rd_data to be valid
+         end
+         4: begin
+            ra <= rd_data;
+            rd_en <= 0;
+            wr_addr <= addr;
+            wr_data <= rb;
+            wr_en <= 1;
+         end
+         5: begin
+            wr_en <= 0;
+            rb <= ra - rb;
+            addr <= addr + 1;
+            stage <= stage + 1;
+            if (stage == 3)
+               state <= 22;
+            else
+               state <= 2;
+         end
+
+         // DC bias removal
+         22: begin
+            rd_addr <= addr;
+            rd_en <= 1;
+         end
+         24: begin
+            ra <= rd_data;
+            rd_en <= 0;
+         end
+         25: begin
+            rb <= (rb >>> 8);
+         end
+         26: begin
+            rb <= rb - ra;
+         end
+         27: begin
+            rc <= rb[15] ? -4 : +4;
+         end
+         28: begin
+            ra <= ra + rc;
+         end
+         30: begin
+            wr_addr <= addr;
+            wr_data <= ra;
+            wr_en <= 1;
+         end
+         31: begin
+            wr_en <= 0;
+         end
+
+         32: begin
+            out <= rb;
+            state <= 0;
+         end
+      endcase
    end
-
-   // DC removal filter
-
-   reg signed[15:0] dc = 0;
-   assign out = (c[7] >>> 8) - dc;
-
-   always @(posedge clk)
-   begin
-      if(stb_pcm) begin
-         if (out[15])
-            dc <= dc - 4;
-         else
-            dc <= dc + 4;
-      end
-   end
-
+   
 endmodule
 
 

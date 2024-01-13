@@ -13,11 +13,6 @@ module test();
    initial begin
       $dumpfile("test.vcd");
       $dumpvars(0, test);
-      $dumpvars(0, test.sender.af00l.c[0]);
-      $dumpvars(0, test.sender.af00l.c[1]);
-      $dumpvars(0, test.sender.af00l.c[2]);
-      $dumpvars(0, test.sender.af00l.c[3]);
-      $dumpvars(0, test.sender.af00l.c[4]);
 
 		# 3
 		`include "din.v"

@@ -11,7 +11,7 @@ module top(
    output RGB2,
    output IOT_37A,
    output IOT_41A,
-   input IOT_50B,
+   input IOT_50B
 );
    
    assign RGB2 = ~eth_tx_busy;

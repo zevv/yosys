@@ -24,7 +24,7 @@ module eth_tx2(
    reg [31:0] crc2 = 0;
 
    wire empty = (n == 15);
-   wire tx_busy = ~(state == IDLE);
+   assign tx_busy = ~(state == IDLE);
    wire tlp = (idle_timer == 320000);
 
    always @(posedge clk) begin

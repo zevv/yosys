@@ -41,7 +41,6 @@ $(VCD): $(VP) $(SRCS)
 	vvp $(VP)
 
 lint: $(SRCS)
-	verilator --lint-only -Wall --timing --top top top.v
 	verilator --lint-only -Wall --timing --top test test.v
 
 prog: $(BIN)
