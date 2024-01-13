@@ -43,18 +43,16 @@ module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, 
 endmodule
 
 
-module audio_filter #(parameter W=24) (
-   input clk, 
-   input stb_sample, input stb_pcm, input din, 
-   output reg signed [15:0] out,
-   output reg rd_en, output reg [9:0] rd_addr, input [23:0] rd_data,
-   output reg wr_en, output reg [9:0] wr_addr, output reg [23:0] wr_data
+// Four stage CIC filter integrators
+
+module cic_integrator(
+   input clk,
+   input stb_sample,
+   input din,
+   output signed [23:0] out
 );
-
-   // Four stage CIC filter to low pass filter and downsample PDM
-
-	wire signed [W-1:0] d[8:0];
-   reg signed [W-1:0] e[0:3];
+   reg signed [23:0] e[0:3];
+   assign out = e[3];
 
    always @(posedge clk)
    begin
@@ -66,7 +64,20 @@ module audio_filter #(parameter W=24) (
       end
    end
 
-         
+endmodule
+
+
+module audio_filter #(parameter W=24) (
+   input clk, 
+   input stb_start,
+   output reg busy,
+   input [9:0] addr_start,
+   input [23:0] din, 
+   output reg signed [15:0] out,
+   output reg rd_en, output reg [9:0] rd_addr, input [23:0] rd_data,
+   output reg wr_en, output reg [9:0] wr_addr, output reg [23:0] wr_data
+);
+
    // four stage comb filter and down converter
 
    reg signed [W-1:0] ra, rb, rc;
@@ -74,17 +85,24 @@ module audio_filter #(parameter W=24) (
    reg [9:0] addr = 0;
    reg [1:0] stage = 0;
 
+   initial begin
+      busy <= 0;
+      rd_en <= 0;
+      wr_en <= 0;
+   end
+
    always @(posedge clk)
    begin
 
       state <= state + 1;
       case (state)
          0: begin
-            if (stb_pcm) begin
-               rb <= e[3];
-               addr <= 0;
+            if (stb_start) begin
+               rb <= din;
+               addr <= addr_start;
                stage <= 0;
                state <= 2;
+               busy <= 1;
             end else begin
                state <= 0;
             end
@@ -147,8 +165,9 @@ module audio_filter #(parameter W=24) (
          end
 
          32: begin
-            out <= rb;
+            out <= rb[15:0];
             state <= 0;
+            busy <= 0;
          end
       endcase
    end

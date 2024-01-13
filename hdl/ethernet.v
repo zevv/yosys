@@ -4,7 +4,7 @@
 /* verilator lint_off DECLFILENAME */
 
 module eth_tx2(
-   input clk, input clk_en, 
+   input clk, input clk_stb, 
    input start, 
    output reg tx_p = 0, output tx_busy,
    output reg bram_rd_en = 0, output reg [9:0] bram_rd_addr = 0, input [7:0] bram_rd_data
@@ -29,7 +29,7 @@ module eth_tx2(
 
    always @(posedge clk) begin
 
-      if(clk_en) begin
+      if(clk_stb) begin
 
          case (state)
             IDLE: begin
