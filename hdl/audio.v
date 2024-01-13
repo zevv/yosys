@@ -139,6 +139,9 @@ module audio_filter #(parameter W=24) (
             rd_addr <= addr;
             rd_en <= 1;
          end
+         23: begin
+            // one clock for rd_data to be valid
+         end
          24: begin
             ra <= rd_data;
             rd_en <= 0;
