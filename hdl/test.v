@@ -20,11 +20,11 @@ module test();
 		# 1 $finish();
 	end
 
-   reg [0:0] din = 0;
+   reg [7:0] din = 0;
    reg eth_clk_stb = 0;
 
-   
    wire tx_eth2;
+   wire tx_led;
    wire au_pdm_clk;
    wire au_pdm_data;
    wire debug;

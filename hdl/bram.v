@@ -13,7 +13,6 @@ module bram(
    localparam SIZE = 1024;
 
    reg [7:0] memory [0:SIZE-1];
-   integer i;
 
    initial begin
       memory[0] = 8'h00;
@@ -52,18 +51,9 @@ module bram24(
    input wire rd_en, input wire [9:0] rd_addr, output reg [23:0] rd_data,
    input wire wr_en, input wire [9:0] wr_addr, input wire [23:0] wr_data
 );
-
-   wire [7:0] rd_data_0 = rd_data[7:0];
-   wire [7:0] rd_data_1 = rd_data[15:8];
-   wire [7:0] rd_data_2 = rd_data[23:16];
-
-   wire [7:0] wr_data_0 = wr_data[7:0];
-   wire [7:0] wr_data_1 = wr_data[15:8];
-   wire [7:0] wr_data_2 = wr_data[23:16];
-
-   bram bram_0(clk, rd_en, rd_addr, rd_data_0, wr_en, wr_addr, wr_data_0);
-   bram bram_1(clk, rd_en, rd_addr, rd_data_1, wr_en, wr_addr, wr_data_1);
-   bram bram_2(clk, rd_en, rd_addr, rd_data_2, wr_en, wr_addr, wr_data_2);
+   bram bram_0(clk, rd_en, rd_addr, rd_data[ 7: 0], wr_en, wr_addr, wr_data[ 7: 0]);
+   bram bram_1(clk, rd_en, rd_addr, rd_data[15: 8], wr_en, wr_addr, wr_data[15: 8]);
+   bram bram_2(clk, rd_en, rd_addr, rd_data[23:16], wr_en, wr_addr, wr_data[23:16]);
       
 endmodule
 

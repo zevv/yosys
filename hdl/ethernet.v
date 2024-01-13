@@ -21,7 +21,6 @@ module eth_tx2(
    reg [7:0] data_next = 0;
    reg [7:0] data_out = 0;
    reg [31:0] crc = 0;
-   reg [31:0] crc2 = 0;
 
    wire empty = (n == 15);
    assign tx_busy = ~(state == IDLE);

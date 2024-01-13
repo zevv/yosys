@@ -86,9 +86,9 @@ module audio_filter #(parameter W=24) (
    reg [1:0] stage = 0;
 
    initial begin
-      busy <= 0;
-      rd_en <= 0;
-      wr_en <= 0;
+      busy = 0;
+      rd_en = 0;
+      wr_en = 0;
    end
 
    always @(posedge clk)
