@@ -7,7 +7,7 @@
 
 module sender(input clk, 
    input eth_clk_stb, output eth_tx, output eth_tx_busy,
-   output au_pdm_clk, input au_pdm_data,
+   output au_pdm_clk, input [15:0] au_pdm_data,
    output debug
 );
 
@@ -30,8 +30,8 @@ module sender(input clk,
    genvar i;
    generate
       for (i = 0; i < CHANNELS/2; i = i + 1) begin : ci
-         cic_integrator ci_l(clk, au_stb_L, au_pdm_data, au_cic[i*2 + 0]);
-         cic_integrator ci_r(clk, au_stb_R, au_pdm_data, au_cic[i*2 + 1]);
+         cic_integrator ci_l(clk, au_stb_L, au_pdm_data[i], au_cic[i*2 + 0]);
+         cic_integrator ci_r(clk, au_stb_R, au_pdm_data[i], au_cic[i*2 + 1]);
       end
    endgenerate
    

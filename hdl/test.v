@@ -2,7 +2,6 @@
 `default_nettype none
 
 `include "sender.v"
-`include "ethernet-stolen.v"
 
 
 module test();
@@ -19,7 +18,7 @@ module test();
 		# 1 $finish();
 	end
 
-   reg [7:0] din = 0;
+   reg [15:0] din = 0;
    reg eth_clk_stb = 0;
 
    wire tx_eth2;
@@ -28,11 +27,9 @@ module test();
    wire au_pdm_data;
    wire debug;
 
-   assign au_pdm_data = din[0];
-
    sender sender (clk, eth_clk_stb,
                   tx_eth2, tx_led,
-                  au_pdm_clk, au_pdm_data, debug);
+                  au_pdm_clk, din, debug);
 
 
    always @(posedge clk) begin

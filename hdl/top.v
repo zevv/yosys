@@ -59,7 +59,7 @@ module top(
    wire eth_tx;
    wire eth_tx_busy;
    wire au_pdm_clk;
-   wire au_pdm_data;
+   wire [15:0] au_pdm_data = { 15'b0, IOT_50B };
    sender sender (clk,
                   clk_eth, eth_tx, eth_tx_busy,
                   au_pdm_clk, au_pdm_data,
