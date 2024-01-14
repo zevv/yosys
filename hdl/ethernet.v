@@ -5,14 +5,13 @@
 
 module eth_tx2(
    input clk, input clk_stb, 
-   input start, 
+   input start_stb, input [10:0] tx_len, 
    output reg tx_p = 0, output tx_busy,
    output reg bram_rd_en = 0, output reg [9:0] bram_rd_addr = 0, input [7:0] bram_rd_data
 );
    
    localparam IDLE = 0, PREAMBLE = 1, SFD = 2, DATA = 3, CRC = 4, SOI = 5, IPG = 6;
    localparam CRC_INIT = 32'hFFFFFFFF, CRC_POLY = 32'h04C11DB7;
-   localparam len = 'd526;
 
    reg [19:0] idle_timer = 0;
    reg [2:0] state = IDLE;
@@ -94,10 +93,12 @@ module eth_tx2(
          endcase
 
          case (state)
-            IDLE: if (start) state <= PREAMBLE;
+            IDLE: if (start_stb) begin
+               state <= PREAMBLE;
+            end
             PREAMBLE: if (ptr == 6 && empty) state <= SFD;
             SFD: if(empty) state <= DATA;
-            DATA: if (ptr == len && empty) state <= CRC;
+            DATA: if (ptr == tx_len && empty) state <= CRC;
             CRC: if (n == 63) state <= SOI;
             SOI: if (n == 5) state <= IPG;
             IPG: if (n == 192) state <= IDLE;

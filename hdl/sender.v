@@ -10,24 +10,26 @@ module sender(input clk,
    output au_pdm_clk, input au_pdm_data,
    output debug
 );
+
+   parameter CHANNELS = 8;
    
   // Audio clock genenerator
 
    wire au_stb_pcm;
-   wire au_stb_left;
-   wire au_stb_right;
+   wire au_stb_L;
+   wire au_stb_R;
    audio_clk_gen ag(clk, au_pdm_clk,
-                    au_stb_pcm, au_stb_left, au_stb_right);
+                    au_stb_pcm, au_stb_L, au_stb_R);
 
    // Audio CIC filter first halves (integrators)
    
-   wire [23:0] au_cic[31:0];
+   wire [23:0] au_cic[CHANNELS-1:0];
 
    genvar i;
    generate
-      for (i = 0; i < 4; i = i + 1) begin : ci
-         cic_integrator ci_l(clk, au_stb_left,  au_pdm_data, au_cic[i*2 + 0]);
-         cic_integrator ci_r(clk, au_stb_right, au_pdm_data, au_cic[i*2 + 1]);
+      for (i = 0; i < CHANNELS/2; i = i + 1) begin : ci
+         cic_integrator ci_l(clk, au_stb_L, au_pdm_data, au_cic[i*2 + 0]);
+         cic_integrator ci_r(clk, au_stb_R, au_pdm_data, au_cic[i*2 + 1]);
       end
    endgenerate
    
@@ -59,23 +61,24 @@ module sender(input clk,
 
    // Ethernet transmitter + BRAM
 
-   reg [7:0] bram_eth_wr_data = 0;
-   wire [7:0] bram_eth_rd_data;
-   wire [9:0] bram_eth_rd_addr;
-   reg [9:0] bram_eth_wr_addr = 14;
    wire bram_eth_rd_en;
+   wire [9:0] bram_eth_rd_addr;
+   wire [7:0] bram_eth_rd_data;
    reg bram_eth_wr_en = 0;
+   reg [9:0] bram_eth_wr_addr = 14;
+   reg [7:0] bram_eth_wr_data = 0;
 
    bram bram_eth0(clk,
       bram_eth_rd_en, bram_eth_rd_addr, bram_eth_rd_data,
       bram_eth_wr_en, bram_eth_wr_addr, bram_eth_wr_data);
      
-   reg eth_start = 0;
+   reg eth_start_stb = 0;
+   reg [10:0] eth_tx_len = 0;
 
    eth_tx2 et(clk, eth_clk_stb,
-              eth_start, eth_tx, eth_tx_busy, 
+              eth_start_stb, eth_tx_len,
+              eth_tx, eth_tx_busy, 
               bram_eth_rd_en, bram_eth_rd_addr, bram_eth_rd_data);
-
 
    // Main state machine
 
@@ -128,7 +131,7 @@ module sender(input clk,
             bram_eth_wr_addr <= bram_eth_wr_addr + 1;
             chan <= chan + 1;
             cic2_addr <= cic2_addr + 8;
-            if (chan == 7)
+            if (chan == CHANNELS - 1)
                state <= 10;
             else 
                state <= 1;
@@ -136,8 +139,9 @@ module sender(input clk,
         
          // If packet full, start ethernet transmit
          10: begin
-            if (bram_eth_wr_addr == 14 + 32 * 16) begin
-               eth_start <= 1;
+            if (bram_eth_wr_addr == 14 + 32 * CHANNELS * 2) begin
+               eth_tx_len <= bram_eth_wr_addr;
+               eth_start_stb <= 1;
                state <= 11;
             end else begin
                state <= 0;
@@ -148,7 +152,7 @@ module sender(input clk,
             state <= 12;
          end
          12: begin
-            eth_start <= 0;
+            eth_start_stb <= 0;
             state <= 0;
          end
       endcase
