@@ -12,6 +12,8 @@ module sender(input clk,
 );
 
    parameter CHANNELS = 8;
+   parameter MAX_FRAME_SIZE = 1024;
+   parameter NSAMPLES = (MAX_FRAME_SIZE - 14) / (CHANNELS * 2);
    
   // Audio clock genenerator
 
@@ -139,7 +141,7 @@ module sender(input clk,
         
          // If packet full, start ethernet transmit
          10: begin
-            if (bram_eth_wr_addr == 14 + 32 * CHANNELS * 2) begin
+            if (bram_eth_wr_addr == 14 + NSAMPLES * CHANNELS * 2) begin
                eth_tx_len <= bram_eth_wr_addr;
                eth_start_stb <= 1;
                state <= 11;
