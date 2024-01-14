@@ -1,0 +1,164 @@
+Info: Critical path report for clock 'clk_$glb_clk' (posedge -> posedge):
+Info: curr total
+Info:  1.4  1.4  Source sender.af00l.din_SB_LUT4_I0_O_SB_LUT4_O_14_LC.O
+Info:  1.8  3.2    Net sender.af00l.rb[0] budget 2.179000 ns (10,17) -> (11,18)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I2_SB_LUT4_O_22_LC.I3
+Info:                Defined in:
+Info:                  audio.v:90.27-90.29
+Info:  0.9  4.0  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I2_SB_LUT4_O_22_LC.O
+Info:  1.8  5.8    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I2[0] budget 2.179000 ns (11,18) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_23_LC.I2
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:49.21-49.23
+Info:  0.6  6.4  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_23_LC.COUT
+Info:  0.0  6.4    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[1] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_12_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  6.7  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_12_LC.COUT
+Info:  0.0  6.7    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[2] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_7_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  7.0  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_7_LC.COUT
+Info:  0.0  7.0    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[3] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_6_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  7.2  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_6_LC.COUT
+Info:  0.0  7.2    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[4] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_5_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  7.5  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_5_LC.COUT
+Info:  0.0  7.5    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[5] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_4_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  7.8  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_4_LC.COUT
+Info:  0.0  7.8    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[6] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_3_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  8.1  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_3_LC.COUT
+Info:  0.0  8.1    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[7] budget 0.000000 ns (11,19) -> (11,19)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_2_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  8.3  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_2_LC.COUT
+Info:  0.6  8.9    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[8] budget 0.560000 ns (11,19) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_1_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  9.2  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_1_LC.COUT
+Info:  0.0  9.2    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[9] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  9.5  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_LC.COUT
+Info:  0.0  9.5    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[10] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_22_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3  9.7  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_22_LC.COUT
+Info:  0.0  9.7    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[11] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_21_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 10.0  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_21_LC.COUT
+Info:  0.0 10.0    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[12] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_20_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 10.3  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_20_LC.COUT
+Info:  0.0 10.3    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[13] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_19_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 10.6  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_19_LC.COUT
+Info:  0.0 10.6    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[14] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_18_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 10.8  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_18_LC.COUT
+Info:  0.0 10.8    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[15] budget 0.000000 ns (11,20) -> (11,20)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_17_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 11.1  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_17_LC.COUT
+Info:  0.6 11.7    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[16] budget 0.560000 ns (11,20) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_16_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 12.0  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_16_LC.COUT
+Info:  0.0 12.0    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[17] budget 0.000000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_15_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 12.2  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_15_LC.COUT
+Info:  0.0 12.2    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[18] budget 0.000000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_14_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 12.5  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_14_LC.COUT
+Info:  0.0 12.5    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[19] budget 0.000000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_13_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 12.8  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_13_LC.COUT
+Info:  0.0 12.8    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[20] budget 0.000000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_11_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 13.1  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_11_LC.COUT
+Info:  0.0 13.1    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[21] budget 0.000000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_10_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 13.3  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_10_LC.COUT
+Info:  0.0 13.3    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[22] budget 0.000000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_9_LC.CIN
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.3 13.6  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_9_LC.COUT
+Info:  0.7 14.3    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_I3[23] budget 0.660000 ns (11,21) -> (11,21)
+Info:                Sink sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_8_LC.I3
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:  0.9 15.2  Source sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1_SB_LUT4_O_8_LC.O
+Info:  1.8 16.9    Net sender.af00l.din_SB_LUT4_I1_O_SB_LUT4_O_I1[23] budget 4.358000 ns (11,21) -> (10,22)
+Info:                Sink sender.af00l.din_SB_LUT4_I2_I3_SB_LUT4_O_LC.I1
+Info:                Defined in:
+Info:                  audio.v:141.19-141.26
+Info:                  /usr/bin/../share/yosys/ice40/arith_map.v:33.26-33.27
+Info:  1.2 18.2  Source sender.af00l.din_SB_LUT4_I2_I3_SB_LUT4_O_LC.O
+Info:  1.8 19.9    Net sender.af00l.din_SB_LUT4_I2_I3[2] budget 4.358000 ns (10,22) -> (10,22)
+Info:                Sink sender.af00l.din_SB_LUT4_I2_LC.I3
+Info:                Defined in:
+Info:                  /usr/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:  0.8 20.7  Setup sender.af00l.din_SB_LUT4_I2_LC.I3
+Info: 11.9 ns logic, 8.8 ns routing
