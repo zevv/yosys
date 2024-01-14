@@ -62,7 +62,7 @@ module sender(input clk,
    reg [7:0] bram_eth_wr_data = 0;
    wire [7:0] bram_eth_rd_data;
    wire [9:0] bram_eth_rd_addr;
-   reg [9:0] bram_eth_wr_addr = 13;
+   reg [9:0] bram_eth_wr_addr = 14;
    wire bram_eth_rd_en;
    reg bram_eth_wr_en = 0;
 
@@ -113,7 +113,6 @@ module sender(input clk,
 
          // For each channel, write PCM to BRAM
          5: begin
-            bram_eth_wr_addr <= bram_eth_wr_addr + 1;
             bram_eth_wr_data <= cic2_out[7:0];
             bram_eth_wr_en <= 1;
             state <= 6;
@@ -126,6 +125,7 @@ module sender(input clk,
          end
          7: begin
             bram_eth_wr_en <= 0;
+            bram_eth_wr_addr <= bram_eth_wr_addr + 1;
             chan <= chan + 1;
             cic2_addr <= cic2_addr + 8;
             if (chan == 7)
@@ -136,7 +136,7 @@ module sender(input clk,
         
          // If packet full, start ethernet transmit
          10: begin
-            if (bram_eth_wr_addr == 14 + 32 * 16 - 1) begin
+            if (bram_eth_wr_addr == 14 + 32 * 16) begin
                eth_start <= 1;
                state <= 11;
             end else begin
@@ -144,7 +144,7 @@ module sender(input clk,
             end
          end
          11: begin
-            bram_eth_wr_addr <= 13;
+            bram_eth_wr_addr <= 14;
             state <= 12;
          end
          12: begin

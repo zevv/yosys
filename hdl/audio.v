@@ -107,6 +107,8 @@ module audio_filter #(parameter W=24) (
 
       state <= state + 1;
       case (state)
+
+         // Wait for start
          0: begin
             if (stb_start) begin
                rb <= din;
@@ -125,7 +127,7 @@ module audio_filter #(parameter W=24) (
             rd_en <= 1;
          end
          3: begin
-            // one clock for rd_data to be valid
+            // wait for rd_data valid
          end
          4: begin
             ra <= rd_data;
@@ -151,7 +153,7 @@ module audio_filter #(parameter W=24) (
             rd_en <= 1;
          end
          23: begin
-            // one clock for rd_data to be valid
+            // wait for rd_data valid
          end
          24: begin
             ra <= rd_data;
