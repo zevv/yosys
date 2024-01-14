@@ -16,7 +16,6 @@ SRCS += audio.v
 YOSYSFLAGS := -Q -T
 YOSYSCMD := synth_ice40 -top top -json $(NAME).json -noflatten
 NEXTPNRFLAGS := --freq 48 --package sg48 --up5k 
-#NEXTNPRFLAGS += --detailed-timing-report
 
 all: $(BIN)
 
