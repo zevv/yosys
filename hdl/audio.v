@@ -163,13 +163,13 @@ module audio_filter #(parameter W=24) (
             rb <= (rb >>> 8);
          end
          9: begin
-            rb <= rb - ra;
+            rb <= rb + ra;
          end
          10: begin
             rc <= rb[15] ? -4 : +4;
          end
          11: begin
-            ra <= ra + rc;
+            ra <= ra - rc;
          end
          12: begin
             wr_addr <= addr;
