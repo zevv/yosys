@@ -86,7 +86,7 @@ module sender(input clk,
 
    assign debug = au_stb_pcm;
    reg [4:0] state = 0;
-   reg [3:0] chan = 0;
+   reg [4:0] chan = 0;
 
    always @(posedge clk) begin
 
