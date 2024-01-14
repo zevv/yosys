@@ -64,7 +64,7 @@ module cic_integrator(
    always @(posedge clk)
    begin
       if(stb_sample) begin
-         e[0] <= e[0] + (din ? +1 : -1);
+         e[0] <= e[0] + (din ? 24'd1 : -24'd1);
          e[1] <= e[1] + e[0];
          e[2] <= e[2] + e[1];
          e[3] <= e[3] + e[2];
@@ -88,7 +88,7 @@ module audio_filter #(parameter W=24) (
    // four stage comb filter and down converter
 
    reg signed [W-1:0] ra, rb, rc;
-   reg [5:0] state = 0;
+   reg [3:0] state = 0;
    reg [9:0] addr = 0;
    reg [1:0] stage = 0;
 
@@ -114,7 +114,7 @@ module audio_filter #(parameter W=24) (
                rb <= din;
                addr <= addr_start;
                stage <= 0;
-               state <= 2;
+               state <= 1;
                busy <= 1;
             end else begin
                state <= 0;
@@ -122,65 +122,65 @@ module audio_filter #(parameter W=24) (
          end
 
          // Differentiator for each stage
-         2: begin
+         1: begin
             rd_addr <= addr;
             rd_en <= 1;
          end
-         3: begin
+         2: begin
             // wait for rd_data valid
          end
-         4: begin
+         3: begin
             ra <= rd_data;
             rd_en <= 0;
             wr_addr <= addr;
             wr_data <= rb;
             wr_en <= 1;
          end
-         5: begin
+         4: begin
             wr_en <= 0;
             rb <= ra - rb;
             addr <= addr + 1;
             stage <= stage + 1;
             if (stage == 3)
-               state <= 22;
+               state <= 5;
             else
-               state <= 2;
+               state <= 1;
          end
 
          // DC bias removal
-         22: begin
+         5: begin
             rd_addr <= addr;
             rd_en <= 1;
          end
-         23: begin
+         6: begin
             // wait for rd_data valid
          end
-         24: begin
+         7: begin
             ra <= rd_data;
             rd_en <= 0;
          end
-         25: begin
+         8: begin
             rb <= (rb >>> 8);
          end
-         26: begin
+         9: begin
             rb <= rb - ra;
          end
-         27: begin
+         10: begin
             rc <= rb[15] ? -4 : +4;
          end
-         28: begin
+         11: begin
             ra <= ra + rc;
          end
-         30: begin
+         12: begin
             wr_addr <= addr;
             wr_data <= ra;
             wr_en <= 1;
          end
-         31: begin
+         13: begin
             wr_en <= 0;
          end
 
-         32: begin
+         14: begin
             out <= rb[15:0];
             state <= 0;
             busy <= 0;
