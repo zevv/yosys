@@ -4,10 +4,15 @@
 /* verilator lint_off DECLFILENAME */
 
 module eth_tx2(
-   input clk, input clk_stb, 
-   input start_stb, input [10:0] tx_len, 
-   output reg tx_p = 0, output tx_busy,
-   output reg bram_rd_en = 0, output reg [9:0] bram_rd_addr = 0, input [7:0] bram_rd_data
+   input clk,
+   input clk_stb, 
+   input start_stb,
+   input [10:0] tx_len, 
+   output reg tx_p = 0,
+   output tx_busy,
+   output reg bram_rd_en = 0,
+   output reg [9:0] bram_rd_addr = 0,
+   input [7:0] bram_rd_data
 );
    
    localparam IDLE = 0, PREAMBLE = 1, SFD = 2, DATA = 3, CRC = 4, SOI = 5, IPG = 6;
