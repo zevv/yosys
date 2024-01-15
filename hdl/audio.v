@@ -3,45 +3,29 @@
 
 
 
-module audio_clk_gen(input clk, output reg clk_pdm = 0, output reg stb_pcm = 0, output reg stb_left = 0, output reg stb_right = 0);
+module audio_clk_gen(
+   input clk,
+   output clk_pdm,
+   output stb_pcm,
+   output stb_left,
+   output stb_right
+);
 
-	reg [8:0] cnt = 0;
-	reg [7:0] div = 0;
+	reg [10:0] cnt = 0;
+
+   assign clk_pdm = cnt[3];
+   assign stb_left = cnt[3:0] == 7;
+   assign stb_right = cnt[3:0] == 15;
+   assign stb_pcm = cnt == 1999;
 
 	always @(posedge clk)
 	begin
-
-		stb_left <= 0;
-		stb_right <= 0;
-		stb_pcm <= 0;
-
       cnt <= cnt + 1;
-
-      case (cnt)
-          0: begin
-             clk_pdm <= 0;
-          end
-          7: begin
-             stb_left <= 1;
-          end
-          8: begin
-            clk_pdm <= 1;
-          end
-          15: begin
-             stb_right <= 1;
-             cnt <= 0;
-             div <= div + 1;
-             if (div == 124) begin
-                stb_pcm <= 1;
-                div <= 0;
-             end
-          end
-    endcase
-
+      if (stb_pcm)
+         cnt <= 0;
 	end
 
 endmodule
-
 
 // Four stage CIC filter integrators
 
@@ -74,12 +58,12 @@ module cic_integrator(
 endmodule
 
 
-module audio_filter #(parameter W=24) (
-   input clk, 
+module audio_filter(
+   input clk,
    input stb_start,
    output reg busy,
    input [9:0] addr_start,
-   input [23:0] din, 
+   input [23:0] din,
    output reg signed [15:0] out,
    output reg rd_en, output reg [9:0] rd_addr, input [23:0] rd_data,
    output reg wr_en, output reg [9:0] wr_addr, output reg [23:0] wr_data
@@ -87,7 +71,7 @@ module audio_filter #(parameter W=24) (
 
    // four stage comb filter and down converter
 
-   reg signed [W-1:0] ra, rb, rc;
+   reg signed [23:0] ra, rb, rc;
    reg [3:0] state = 0;
    reg [9:0] addr = 0;
    reg [1:0] stage = 0;
@@ -187,7 +171,7 @@ module audio_filter #(parameter W=24) (
          end
       endcase
    end
-   
+
 endmodule
 
 
